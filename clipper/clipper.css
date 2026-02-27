@@ -1,4 +1,12 @@
-@import "tailwindcss";
+/** 
+ * Clipper CSS Framework
+ * version: 0.1.0
+ *
+ * Ensure @import "tailwindcss"; is added before clipper.css in your project.
+ *
+ * THIS FILE SHOULD NOT BE EDITED:
+ * Customize the framework with variables.css and components.css instead.
+ */
 @import "./variables.css";
 @import "./components.css";
 
@@ -14,13 +22,7 @@
   --layout-readable: minmax(var(--page-margin), 1fr) minmax(0, var(--readable-width)) minmax(var(--page-margin), 1fr);
 }
 
-/* =========================================================================
-   BASE — Global element defaults
-   ========================================================================= */
-
 @layer base {
-  /* ===== DOCUMENT ROOT ===== */
-
   html,
   body {
     min-height: 100vh;
@@ -32,8 +34,6 @@
     /* Prevents horizontal layout jump when vertical scrollbar appears/disappears */
     scrollbar-gutter: stable;
   }
-
-  /* ===== BODY ===== */
 
   body {
     display: flex;
@@ -48,7 +48,7 @@
     flex: 1 0 auto;
   }
 
-  /* ===== LAYOUT GRID SYSTEM ===== */
+  /* ===== Layout grid system ===== */
 
   :where(header, footer, section) {
     display: grid;
@@ -125,7 +125,7 @@
     gap: var(--div-gap);
   }
 
-  /* ===== TYPOGRAPHY ===== */
+  /* ===== Typography ===== */
 
   h1,
   .h1,
@@ -227,7 +227,7 @@
 
   :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
     /* Unified keyboard-focus style across interactive controls */
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--focus-outline-color);
     outline-offset: 2px;
   }
 }

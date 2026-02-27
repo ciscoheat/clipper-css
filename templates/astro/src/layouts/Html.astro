@@ -1,4 +1,5 @@
 ---
+import "tailwindcss";
 import "../styles/clipper.css";
 
 interface Props {
@@ -23,5 +24,6 @@ const { title, lang = "en" } = Astro.props;
     <title>{title}</title>
   </head>
   <slot />
+
 
 </html>

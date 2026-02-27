@@ -34,14 +34,14 @@ async function main() {
     astro: {
       clipperDest: "src/styles",
       nextSteps: [
-        "Ensure tailwind v4 is installed: https://docs.astro.build/en/guides/styling/#tailwind",
+        "Ensure tailwind is installed: https://docs.astro.build/en/guides/styling/#tailwind",
         "Add \"import '../styles/clipper.css'\" to your global layout.",
       ],
     },
     sveltekit: {
       clipperDest: "src/lib/clipper",
       nextSteps: [
-        "Ensure tailwind v4 is installed: https://svelte.dev/docs/cli/tailwind",
+        "Ensure tailwind is installed: https://svelte.dev/docs/cli/tailwind",
         'import "$lib/clipper/clipper.css"; in your src/routes/+layout.svelte.',
       ],
     },

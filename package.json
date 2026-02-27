@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "description": "Clipper is a simple Tailwind framework for building pages without fighting CSS and drowning in utility classes.",
   "scripts": {
-    "test:astro": "cd tests/astro && node ../../bin/cli.js",
-    "test:sveltekit": "cd tests/sveltekit && node ../../bin/cli.js"
+    "clean": "node scripts/utils.js clean",
+    "build": "node scripts/utils.js update-version",
+    "test:astro": "cd tests/astro && node ../../bin/cli.js -y",
+    "test:sveltekit": "cd tests/sveltekit && node ../../bin/cli.js -y"
   },
   "type": "module",
   "main": "bin/cli.js",

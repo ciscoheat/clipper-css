@@ -11,6 +11,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
   const cwd = process.cwd();
+  const autoYes = process.argv.includes("-y") || process.argv.includes("--yes");
+
+  // Detect dev mode: if clipper/ source directory exists relative to bin/, we're in development
+  const devMode = await exists(path.resolve(__dirname, "..", "clipper"));
 
   // 1. Detect project type
   let type = null;
@@ -54,9 +58,10 @@ async function main() {
 
   // 3. Scan for existing clipper.css
   // Using globby with gitignore support to avoid manual ignore lists
+  // In dev mode, only ignore node_modules; in production, respect .gitignore
   const existingClipperFiles = await globby("**/clipper.css", {
     cwd,
-    gitignore: true,
+    ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
   });
 
   const existingClipperPath = existingClipperFiles.length > 0 ? existingClipperFiles[0] : null;
@@ -78,19 +83,24 @@ async function main() {
 
     const oldVersion = parseVersion(oldContent);
     const newVersion = parseVersion(newContent);
+    const isNewer = oldVersion && newVersion && oldVersion < newVersion;
 
     console.log(`   Current version: ${oldVersion || "unknown"}`);
     console.log(`   New version:     ${newVersion || "unknown"}`);
 
-    const response = await prompts({
-      type: "confirm",
-      name: "overwrite",
-      message: "Do you want to overwrite clipper.css with the latest version?",
-      initial: true,
-    });
+    let overwrite = isNewer;
 
-    if (response.overwrite) {
-      console.log(`Updating clipper.css...`);
+    if (isNewer && !autoYes) {
+      const response = await prompts({
+        type: "confirm",
+        name: "overwrite",
+        message: "Do you want to overwrite clipper.css with the latest version?",
+        initial: true,
+      });
+      overwrite = response.overwrite;
+    }
+
+    if (overwrite) {
       await fs.copyFile(newClipperCssPath, path.join(cwd, existingClipperPath));
       console.log("✅ Updated clipper.css");
     } else {
@@ -105,7 +115,10 @@ async function main() {
 
     // Core Clipper Files
     if (await exists(clipperSourceDir)) {
-      const coreFiles = await globby("**/*", { cwd: clipperSourceDir });
+      const coreFiles = await globby("**/*", {
+        cwd: clipperSourceDir,
+        ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
+      });
       for (const f of coreFiles) {
         filesToCopy.push({
           src: path.join(clipperSourceDir, f),
@@ -116,7 +129,10 @@ async function main() {
 
     // Framework Template Files
     if (await exists(templateSourceDir)) {
-      const templFiles = await globby("**/*", { cwd: templateSourceDir });
+      const templFiles = await globby("**/*", {
+        cwd: templateSourceDir,
+        ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
+      });
       for (const f of templFiles) {
         filesToCopy.push({
           src: path.join(templateSourceDir, f),
@@ -133,14 +149,18 @@ async function main() {
     console.log(`\nThe following files will be created/updated:`);
     filesToCopy.forEach((f) => console.log(` + ${f.dest}`));
 
-    const response = await prompts({
-      type: "confirm",
-      name: "proceed",
-      message: "Proceed with installation?",
-      initial: true,
-    });
+    let proceed = autoYes;
+    if (!autoYes) {
+      const response = await prompts({
+        type: "confirm",
+        name: "proceed",
+        message: "Proceed with installation?",
+        initial: true,
+      });
+      proceed = response.proceed;
+    }
 
-    if (!response.proceed) {
+    if (!proceed) {
       console.log("Aborted.");
       process.exit(0);
     }
@@ -156,18 +176,18 @@ async function main() {
 
     // Inject @import
     const destDir = selectedConfig.clipperDest;
-    await injectImport(cwd, destDir);
+    await injectImport(cwd, destDir, devMode);
   }
 }
 
 // Helpers
 
 /**
- * Parses version from the first line of CSS file if present (e.g. /* v1.0.0 *\/)
+ * Parses version from CSS file if present (e.g. v1.0.0 in comment blocks)
  * @param {string} content
  */
 function parseVersion(content) {
-  const match = content.match(/\/\*\s*v?([\d\.]+)\s*\*\//);
+  const match = content.match(/v([\d\.]+)/);
   return match ? match[1] : null;
 }
 
@@ -175,12 +195,13 @@ function parseVersion(content) {
  * Scans for tailwind imports and injects clipper import
  * @param {string} cwd
  * @param {string} clipperDestRelative
+ * @param {boolean} devMode
  */
-async function injectImport(cwd, clipperDestRelative) {
-  // Use .gitignore to determine which CSS files to scan (ignore node_modules, build outputs etc)
+async function injectImport(cwd, clipperDestRelative, devMode) {
+  // Use .gitignore or custom ignore based on dev mode
   const cssFiles = await globby("**/*.css", {
     cwd,
-    gitignore: true,
+    ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
   });
 
   if (cssFiles.length === 0) {

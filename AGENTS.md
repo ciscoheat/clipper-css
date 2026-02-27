@@ -41,20 +41,8 @@ This guide applies to:
 ### File structure
 
 - `src/styles/variables.css` → design tokens (color, spacing, typography) + Tailwind v4 `@theme` exports
-- `src/styles/clipper.css` → framework foundations (layout, typography, base styles)
+- `src/styles/clipper.css` → framework foundations - no need to change this file unless explicitly asked
 - `src/styles/components.css` → reusable component primitives (`.btn`, `.card`, `.badge`)
-- `src/layouts/Header.astro` → shared header component
-- `src/layouts/Footer.astro` → shared footer component
-- `src/layouts/Body.astro` → site shell composing Header + main + Footer
-- `src/pages/*.astro` → page-specific content
-
-### Layout ownership
-
-- `Body.astro` composes the site shell: Header + `<main>` + Footer
-- Pages use `Body.astro` and provide content for `<main>`
-- Never duplicate Header/Footer markup across pages
-
----
 
 ## Styling rules
 
@@ -67,12 +55,14 @@ This guide applies to:
 ### Components in `components.css`
 
 **Allowed** — Generic, reusable primitives:
+
 - `.btn`
 - `.card`
 - `.badge`
-- `.btn-outline`
+- `.btn .btn-outline`
 
 **Avoid** — Page/section-scoped classes:
+
 - Page-scoped: `.page-*`, `.home-*`
 - Section-scoped: `.hero-*`, `.footer-*`
 - One-off namespaces: `.cs-*`
@@ -88,17 +78,20 @@ If it's one-off, keep it as utilities in markup.
 Use semantic tokens from `variables.css`:
 
 **Base colors:**
+
 - `background`, `foreground`
 - `accent`, `accent-foreground`
 - `muted`, `muted-foreground`
 
 **Primary colors:**
+
 - `primary` (including 50-900 shades)
 - `primary-foreground`
 - `primary-hover`
 - `primary-muted`
 
 **Other:**
+
 - `link`, `link-hover`
 - `link-underline`, `link-underline-hover`
 - `border`
@@ -130,28 +123,22 @@ Examples: `gap-sm`, `gap-base`, `gap-xl`
 
 Body text stays stable while heading sizes scale fluidly via `clamp()`.
 
----
-
 ## Utility classes
 
-| Class           | Function                                  |
-| --------------- | ----------------------------------------- |
-| `row`           | Flex-row with sensible defaults           |
-| `readable`      | Max-width for readable text               |
-| `full-width`    | Break children out of `page-width`        |
-| `page-width`    | Restore `page-width` to inner content     |
-| `header-sticky` | Simple sticky header                      |
-
----
+| Class           | Function                              |
+| --------------- | ------------------------------------- |
+| `row`           | Flex-row with sensible defaults       |
+| `readable`      | Max-width for readable text           |
+| `full-width`    | Break children out of `page-width`    |
+| `page-width`    | Restore `page-width` to inner content |
+| `header-sticky` | Simple sticky header                  |
 
 ## Data modeling
 
-- Define page data in the top script block (`---`) as arrays/objects
+- Define page data in the top script block as arrays/objects
 - Structure mock data like real data (stable keys, realistic types)
 - Keep rendering logic in templates, data in the script block
 - When real data arrives (CMS/API), swap the source with minimal template changes
-
----
 
 ## Accessibility checklist
 
@@ -160,43 +147,36 @@ Body text stays stable while heading sizes scale fluidly via `clamp()`.
 - Ensure focus-visible states remain clear
 - Use real links/buttons for interaction
 
----
-
 ## Implementation workflow
 
 When working from a design/screenshot:
 
 1. Extract semantic structure (`header`, `main`, `section`, `footer`)
-2. Implement in Astro with minimal wrappers
+2. Implement with minimal wrappers
 3. Map visual decisions to existing tokens
 4. Use utilities for page-specific layout/spacing/typography
 5. Add to `components.css` only if the pattern truly repeats
 6. Validate desktop/mobile + dark mode
 7. Run `pnpm build` to verify
 
----
-
 ## Definition of done
 
 - [ ] Requested outcome is implemented
-- [ ] Global shell remains composed in `Body.astro` (no duplication)
-- [ ] Page-specific styling uses utilities in markup
+- [ ] Page-specific styling uses utilities in markup, as few as possible and primarily the clipper utilities
 - [ ] Mock data is defined in script block, structured for real data
 - [ ] `components.css` contains only generic reusable primitives
 - [ ] Tokens are used consistently (no arbitrary colors)
 - [ ] Dark mode remains intentional/readable
 - [ ] `pnpm build` passes
 
----
-
 ## Quick reference: Do / Don't
 
 ### Do
 
 - Reuse existing primitives first
-- Keep markup semantic and lean
+- Keep markup semantic and lean - don't add utilities unless required
+- Use Clipper's spacing utilities (`gap-sm`, `gap-base`, `mb-xl` etc.)
 - Use utilities for page styling
-- Use Clipper's `gap-*` spacing utilities (`gap-sm`, `gap-base`, etc.)
 - Centralize colors in tokens
 
 ### Don't

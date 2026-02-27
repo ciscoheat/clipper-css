@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-// @ts-check
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import glob from "fast-glob";
+import prompts from "prompts";
 
 // Use path helpers for ES modules
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -12,8 +13,7 @@ async function main() {
   const cwd = process.cwd();
 
   // 1. Detect project type
-  /** @type {keyof typeof config} */
-  let type;
+  let type = null;
 
   if ((await exists(path.join(cwd, "astro.config.mjs"))) || (await exists(path.join(cwd, "astro.config.ts")))) {
     type = "astro";
@@ -21,7 +21,9 @@ async function main() {
     type = "sveltekit";
   } else if ((await exists(path.join(cwd, "next.config.js"))) || (await exists(path.join(cwd, "next.config.mjs")))) {
     type = "next";
-  } else {
+  }
+
+  if (!type) {
     console.error("❌ No supported framework detected (Astro, SvelteKit, Next.js).");
     console.error("   Run this command at the root of a supported project.");
     process.exit(1);
@@ -32,56 +34,205 @@ async function main() {
   // 2. Configuration for frameworks
   const config = {
     astro: {
-      clipperDest: "src/styles",
-      nextSteps: [
-        "Ensure tailwind is installed: https://docs.astro.build/en/guides/styling/#tailwind",
-        "Add \"import '../styles/clipper.css'\" to your global layout.",
-      ],
+      clipperDest: "src/clipper",
+      templateSrc: "astro",
     },
     sveltekit: {
       clipperDest: "src/lib/clipper",
-      nextSteps: [
-        "Ensure tailwind is installed: https://svelte.dev/docs/cli/tailwind",
-        'import "$lib/clipper/clipper.css"; in your src/routes/+layout.svelte.',
-      ],
+      templateSrc: "sveltekit",
     },
     next: {
       clipperDest: "src/clipper",
-      nextSteps: ['Import "./clipper/clipper.css" in your layout.tsx or globals.css.'],
+      templateSrc: "next",
     },
   };
 
-  const selectedConfig = config[/** @type {keyof typeof config} */ (type)];
+  const selectedConfig = config[type];
+  const clipperSourceDir = path.resolve(__dirname, "..", "clipper");
   const templatesDir = path.resolve(__dirname, "..", "templates");
+  const templateSourceDir = path.join(templatesDir, selectedConfig.templateSrc);
 
-  // 3. Copy Framework Template (Everything from templates/FRAMEWORK to content root)
-  const frameworkTemplateSrc = path.join(templatesDir, type);
+  // 3. Scan for existing clipper.css
+  const existingClipperFiles = await glob("**/clipper.css", {
+    cwd,
+    ignore: ["node_modules/**", ".git/**", "dist/**", ".astro/**", ".svelte-kit/**", ".next/**"],
+  });
 
-  if (await exists(frameworkTemplateSrc)) {
-    console.log(`Installing ${type} template files...`);
-    await copyDir(frameworkTemplateSrc, cwd);
-  } else {
-    console.warn(`⚠️ No template directory found for ${type} at ${frameworkTemplateSrc}`);
-  }
+  const existingClipperPath = existingClipperFiles.length > 0 ? existingClipperFiles[0] : null;
 
-  // 4. Copy Base Clipper Files
-  const clipperSource = path.join(__dirname, "..", "clipper");
-  const clipperDestPath = path.join(cwd, selectedConfig.clipperDest);
+  if (existingClipperPath) {
+    // --- FLOW 2: FOUND ---
+    console.log(`\n⚠️  Found existing configuration at: ${existingClipperPath}`);
 
-  console.log(`Installing Clipper core to: ${clipperDestPath}`);
-  await copyDir(clipperSource, clipperDestPath);
+    const newClipperCssPath = path.join(clipperSourceDir, "clipper.css");
+    
+    let oldContent = "";
+    try {
+        oldContent = await fs.readFile(path.join(cwd, existingClipperPath), "utf-8");
+    } catch (e) { console.error("Could not read existing file"); }
+    
+    const newContent = await fs.readFile(newClipperCssPath, "utf-8");
 
-  // 5. Tailwind Configuration Hint
-  console.log("\n✅ Clipper installed successfully!");
-  console.log("Next steps:");
-  if (selectedConfig.nextSteps) {
-    selectedConfig.nextSteps.forEach((step, index) => {
-      console.log(`  ${index + 1}. ${step}`);
+    const oldVersion = parseVersion(oldContent);
+    const newVersion = parseVersion(newContent);
+
+    console.log(`   Current version: ${oldVersion || "unknown"}`);
+    console.log(`   New version:     ${newVersion || "unknown"}`);
+
+    const response = await prompts({
+      type: "confirm",
+      name: "overwrite",
+      message: "Do you want to overwrite clipper.css with the latest version?",
+      initial: true,
     });
+
+    if (response.overwrite) {
+      console.log(`Updating clipper.css...`);
+      await fs.copyFile(newClipperCssPath, path.join(cwd, existingClipperPath));
+      console.log("✅ Updated clipper.css");
+    } else {
+      console.log("Skipping update.");
+    }
+  } else {
+    // --- FLOW 1: NOT FOUND ---
+    console.log(`\nPossible new setup detected.`);
+
+    // Gather files to copy
+    const filesToCopy = [];
+
+    // Core Clipper Files
+    if (await exists(clipperSourceDir)) {
+        const coreFiles = await glob("**/*", { cwd: clipperSourceDir });
+        for (const f of coreFiles) {
+            filesToCopy.push({
+                src: path.join(clipperSourceDir, f),
+                dest: path.join(selectedConfig.clipperDest, f),
+            });
+        }
+    }
+
+    // Framework Template Files
+    if (await exists(templateSourceDir)) {
+      const templFiles = await glob("**/*", { cwd: templateSourceDir });
+      for (const f of templFiles) {
+        filesToCopy.push({
+          src: path.join(templateSourceDir, f),
+          dest: f, // relative to root
+        });
+      }
+    }
+
+    if (filesToCopy.length === 0) {
+        console.warn("No files found to copy.");
+        process.exit(1);
+    }
+
+    console.log(`\nThe following files will be created/updated:`);
+    filesToCopy.forEach((f) => console.log(` + ${f.dest}`));
+
+    const response = await prompts({
+      type: "confirm",
+      name: "proceed",
+      message: "Proceed with installation?",
+      initial: true,
+    });
+
+    if (!response.proceed) {
+      console.log("Aborted.");
+      process.exit(0);
+    }
+
+    // Perform Copy
+    for (const f of filesToCopy) {
+      const absDest = path.join(cwd, f.dest);
+      await fs.mkdir(path.dirname(absDest), { recursive: true });
+      await fs.copyFile(f.src, absDest);
+    }
+
+    console.log("✅ Files installed.");
+
+    // Inject @import
+    const destDir = selectedConfig.clipperDest;
+    await injectImport(cwd, destDir);
   }
 }
 
 // Helpers
+
+/**
+ * Parses version from the first line of CSS file if present (e.g. /* v1.0.0 *\/)
+ * @param {string} content
+ */
+function parseVersion(content) {
+  const match = content.match(/\/\*\s*v?([\d\.]+)\s*\*\//);
+  return match ? match[1] : null;
+}
+
+/**
+ * Scans for tailwind imports and injects clipper import
+ * @param {string} cwd
+ * @param {string} clipperDestRelative
+ */
+async function injectImport(cwd, clipperDestRelative) {
+  const cssFiles = await glob("**/*.css", {
+    cwd,
+    ignore: ["node_modules/**", "dist/**", ".git/**", "public/**", clipperDestRelative + "/**"],
+  });
+
+  if (cssFiles.length === 0) {
+      console.log("ℹ️  No CSS files found to inject import.");
+      return;
+  }
+
+  let patched = false;
+
+  for (const file of cssFiles) {
+    const absPath = path.join(cwd, file);
+    let content = await fs.readFile(absPath, "utf-8");
+
+    // Regex to match @import "tailwindcss" or 'tailwindcss' or similar
+    // Matches: @import "tailwindcss"; OR @import 'tailwindcss'
+    const tailwindImportRegex = /@import\s+['"]tailwindcss['"]\s*;?/i;
+    const match = content.match(tailwindImportRegex);
+
+    if (match) {
+      // Check if already imported
+      if (content.includes("clipper.css")) continue;
+
+      // Calculate relative path from this css file to the installed clipper.css
+      // clipperDestRelative is usually src/clipper
+      // file is usually src/app.css
+      
+      const clipperCssAbsPath = path.join(cwd, clipperDestRelative, "clipper.css");
+      const cssFileDir = path.dirname(absPath);
+      
+      let relPath = path.relative(cssFileDir, clipperCssAbsPath);
+
+      // Ensure "./" prefix if it's in the same directory or simple relative path
+      if (!relPath.startsWith(".")) {
+        relPath = "./" + relPath;
+      }
+      // Fix windows backslashes
+      relPath = relPath.replace(/\\/g, "/");
+
+      const injection = `\n@import '${relPath}';`;
+
+      // Insert after the match
+      const insertPos = match.index + match[0].length;
+      const newContent = content.slice(0, insertPos) + injection + content.slice(insertPos);
+
+      await fs.writeFile(absPath, newContent, "utf-8");
+      console.log(`✅ Injected import into ${file}`);
+      patched = true;
+      break; 
+    }
+  }
+
+  if (!patched) {
+    console.log(`ℹ️  Could not automatically inject CSS import. Please import ${clipperDestRelative}/clipper.css manually.`);
+  }
+}
+
 /**
  * @param {string} p
  */
@@ -91,26 +242,6 @@ async function exists(p) {
     return true;
   } catch {
     return false;
-  }
-}
-
-/**
- * @param {string} src
- * @param {string} dest
- */
-async function copyDir(src, dest) {
-  await fs.mkdir(dest, { recursive: true });
-  const entries = await fs.readdir(src, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      await copyDir(srcPath, destPath);
-    } else {
-      await fs.copyFile(srcPath, destPath);
-    }
   }
 }
 

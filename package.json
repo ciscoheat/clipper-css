@@ -1,7 +1,7 @@
 {
   "name": "clipper-css",
-  "version": "1.0.0",
-  "description": "Clipper is a simple tailwind framework for building pages fast without fighting CSS.",
+  "version": "0.1.0",
+  "description": "Clipper is a simple Tailwind framework for building pages without fighting CSS and drowning in utility classes.",
   "type": "module",
   "main": "bin/cli.js",
   "bin": {
@@ -12,7 +12,9 @@
     "css",
     "tailwind",
     "framework",
-    "design-system"
+    "design-system",
+    "sveltekit",
+    "astro"
   ],
   "author": "Clipper",
   "license": "ISC",
@@ -21,5 +23,9 @@
     "templates",
     "src",
     "README.md"
-  ]
+  ],
+  "dependencies": {
+    "fast-glob": "^3.3.3",
+    "prompts": "^2.4.2"
+  }
 }

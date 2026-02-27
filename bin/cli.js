@@ -9,9 +9,32 @@ import prompts from "prompts";
 // Use path helpers for ES modules
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// ANSI color codes for terminal output
+const colors = {
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  cyan: "\x1b[36m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  red: "\x1b[31m",
+  gray: "\x1b[90m",
+};
+
+const c = colors; // shorthand
+
+// Helper to automatically reset colors after logging
+function log(message, color = "") {
+  // Replace any internal ._reset patterns with nothing since we'll reset at the end
+  const cleaned = message.replace(/\x1b\[0m/g, "");
+  console.log(`${color}${cleaned}${c.reset}`);
+}
+
 async function main() {
   const cwd = process.cwd();
   const autoYes = process.argv.includes("-y") || process.argv.includes("--yes");
+
+  // Print header
+  log(`\n  ✨ Clipper CSS Installer ✨\n`, `${c.cyan}${c.bright}`);
 
   // Detect dev mode: if clipper/ source directory exists relative to bin/, we're in development
   const devMode = await exists(path.resolve(__dirname, "..", "clipper"));
@@ -28,12 +51,12 @@ async function main() {
   }
 
   if (!type) {
-    console.error("❌ No supported framework detected (Astro, SvelteKit, Next.js).");
-    console.error("   Run this command at the root of a supported project.");
+    log(`❌ No supported framework detected\n   Supported: Astro, SvelteKit, Next.js`, `${c.red}${c.bright}`);
+    log(`   Run this command at the root of a supported project.`, c.gray);
     process.exit(1);
   }
 
-  console.log(`Detected project type: ${type}`);
+  log(`✓ Detected project type: ${c.bright}${type}${c.reset}`, c.green);
 
   // 2. Configuration for frameworks
   const config = {
@@ -68,7 +91,7 @@ async function main() {
 
   if (existingClipperPath) {
     // --- FLOW 2: FOUND ---
-    console.log(`\n⚠️  Found existing configuration at: ${existingClipperPath}`);
+    log(`\n⚠️  Found existing configuration\n   ${existingClipperPath}`, c.yellow);
 
     const newClipperCssPath = path.join(clipperSourceDir, "clipper.css");
 
@@ -76,7 +99,7 @@ async function main() {
     try {
       oldContent = await fs.readFile(path.join(cwd, existingClipperPath), "utf-8");
     } catch (e) {
-      console.error("Could not read existing file");
+      log(`Could not read existing file`, c.red);
     }
 
     const newContent = await fs.readFile(newClipperCssPath, "utf-8");
@@ -85,8 +108,8 @@ async function main() {
     const newVersion = parseVersion(newContent);
     const isNewer = oldVersion && newVersion && oldVersion < newVersion;
 
-    console.log(`   Current version: ${oldVersion || "unknown"}`);
-    console.log(`   New version:     ${newVersion || "unknown"}`);
+    log(`   Current version: ${oldVersion || "unknown"}`);
+    log(`   New version:     ${newVersion || "unknown"}`);
 
     let overwrite = isNewer;
 
@@ -102,13 +125,13 @@ async function main() {
 
     if (overwrite) {
       await fs.copyFile(newClipperCssPath, path.join(cwd, existingClipperPath));
-      console.log("✅ Updated clipper.css");
+      log(`✅ Updated clipper.css`, c.green);
     } else {
-      console.log("Skipping update.");
+      log(`Skipping update.`, c.gray);
     }
   } else {
     // --- FLOW 1: NOT FOUND ---
-    console.log(`\nPossible new setup detected.`);
+    log(`\n✨ New setup detected`, c.cyan);
 
     // Gather files to copy
     const filesToCopy = [];
@@ -142,12 +165,12 @@ async function main() {
     }
 
     if (filesToCopy.length === 0) {
-      console.warn("No files found to copy.");
+      log(`No files found to copy.`, c.red);
       process.exit(1);
     }
 
-    console.log(`\nThe following files will be created/updated:`);
-    filesToCopy.forEach((f) => console.log(` + ${f.dest}`));
+    log(`\nThe following files will be created/updated:`, c.gray);
+    filesToCopy.forEach((f) => log(` + ${f.dest}`, c.cyan));
 
     let proceed = autoYes;
     if (!autoYes) {
@@ -161,7 +184,7 @@ async function main() {
     }
 
     if (!proceed) {
-      console.log("Aborted.");
+      log(`Aborted.`, c.gray);
       process.exit(0);
     }
 
@@ -172,7 +195,7 @@ async function main() {
       await fs.copyFile(f.src, absDest);
     }
 
-    console.log("✅ Files installed.");
+    log(`✅ Files installed.`, c.green);
 
     // Inject @import
     const destDir = selectedConfig.clipperDest;
@@ -205,7 +228,7 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
   });
 
   if (cssFiles.length === 0) {
-    console.log("ℹ️  No CSS files found to inject import.");
+    log(`ℹ️  No CSS files found to inject import.`, c.gray);
     return;
   }
 
@@ -247,10 +270,17 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
       const newContent = content.slice(0, insertPos) + injection + content.slice(insertPos);
 
       await fs.writeFile(absPath, newContent, "utf-8");
-      console.log(`✅ Injected import into ${file}`);
+      log(`✅ Injected import into ${file}`, c.green);
       patched = true;
       break;
     }
+  }
+
+  if (!patched) {
+    log(
+      `ℹ️  Could not automatically inject CSS import.\n   Please import ${clipperDestRelative}/clipper.css manually.`,
+      c.gray,
+    );
   }
 }
 

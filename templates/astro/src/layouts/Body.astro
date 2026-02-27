@@ -1,25 +1,21 @@
 ---
-const { title = "Clipper Site" } = Astro.props;
-import Header from './Header.astro';
-import Footer from './Footer.astro';
-import '../clipper/theme.css'; // Assuming theme extraction or just import variables
-import '../clipper/clipper.css';
+import Html from "../layouts/Html.astro";
+import Header from "./Header.astro";
+import Footer from "./Footer.astro";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body class="bg-background text-foreground antialiased min-h-screen flex flex-col">
-		<Header />
-		<main class="flex-1 w-full max-w-screen-xl mx-auto px-4 py-8">
-			<slot />
-		</main>
-		<Footer />
-	</body>
-</html>
+<Html title={title}>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</Html>

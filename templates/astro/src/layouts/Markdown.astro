@@ -1,0 +1,43 @@
+---
+import Body from "../layouts/Body.astro";
+import type { MarkdownLayoutProps } from "astro";
+
+type Props = MarkdownLayoutProps<{
+  title: string;
+}>;
+
+const { frontmatter } = Astro.props;
+const { title } = frontmatter;
+---
+
+<Body title={title}>
+  <section class="mx-auto max-w-[100ch] markdown-content">
+    <slot />
+  </section>
+</Body>
+
+<style>
+  .markdown-content {
+    :where(ul, ol) {
+      display: block;
+      padding-inline-start: 1.5em;
+      margin-block: var(--space-base);
+    }
+
+    ul {
+      list-style: disc;
+    }
+
+    ol {
+      list-style: decimal;
+    }
+
+    :where(li) {
+      display: list-item;
+    }
+
+    :where(ul ul, ol ol, ul ol, ol ul) {
+      margin-block: var(--space-2xs);
+    }
+  }
+</style>

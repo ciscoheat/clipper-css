@@ -1,0 +1,184 @@
+---
+// Theme toggle component - system preference fallback with localStorage override
+---
+
+<button class="theme-toggle" aria-label="Toggle dark mode" aria-pressed={false} title="Toggle light/dark mode">
+  <span class="theme-icon" data-mode="light" aria-hidden="true">☀️</span>
+  <span class="theme-icon" data-mode="system" aria-hidden="true">🖥️</span>
+  <span class="theme-icon" data-mode="dark" aria-hidden="true">🌙</span>
+</button>
+
+<script>
+  // Theme toggle functionality with system preference fallback
+  const themeToggle = document.querySelector(".theme-toggle");
+  const html = document.documentElement;
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const THEME_KEY = "clipper-theme";
+
+  type ThemeMode = "system" | "dark" | "light";
+  type ThemeWindow = Window & { __clipperThemeToggleAbortController?: AbortController };
+  const themeWindow = window as ThemeWindow;
+
+  themeWindow.__clipperThemeToggleAbortController?.abort();
+  const listenerController = new AbortController();
+  themeWindow.__clipperThemeToggleAbortController = listenerController;
+
+  function getSystemMode(): Exclude<ThemeMode, "system"> {
+    return mediaQuery.matches ? "dark" : "light";
+  }
+
+  function getStoredMode(): ThemeMode {
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored === "dark" || stored === "light" || stored === "system") {
+      return stored;
+    }
+
+    return "system";
+  }
+
+  function applyTheme(mode: ThemeMode) {
+    const resolvedMode = mode === "system" ? getSystemMode() : mode;
+    html.classList.toggle("dark", resolvedMode === "dark");
+    html.classList.toggle("light", resolvedMode === "light");
+  }
+
+  const legacyTheme = localStorage.getItem("theme");
+  if (legacyTheme !== null) {
+    localStorage.removeItem("theme");
+  }
+
+  // Initialize theme from localStorage or system preference
+  function initTheme() {
+    const mode = getStoredMode();
+    applyTheme(mode);
+    updateToggleState(mode);
+  }
+
+  function updateToggleState(mode: ThemeMode) {
+    themeToggle?.setAttribute("title", `Theme: ${mode} (click icon to set)`);
+    themeToggle?.setAttribute("aria-label", `Theme mode ${mode}. Click an icon to set theme.`);
+
+    themeToggle?.querySelectorAll<HTMLElement>(".theme-icon").forEach((icon) => {
+      const iconMode = icon.dataset.mode as ThemeMode | undefined;
+      if (!iconMode) {
+        return;
+      }
+
+      const isActive = iconMode === mode;
+      icon.dataset.active = String(isActive);
+      icon.setAttribute("aria-hidden", "true");
+    });
+  }
+
+  function setMode(mode: ThemeMode) {
+    applyTheme(mode);
+    localStorage.setItem(THEME_KEY, mode);
+    updateToggleState(mode);
+  }
+
+  function selectTheme(event: Event) {
+    const target = event.target;
+    if (!(target instanceof Element)) {
+      return;
+    }
+
+    const icon = target.closest<HTMLElement>(".theme-icon");
+    const mode = icon?.dataset.mode as ThemeMode | undefined;
+    if (!mode) {
+      return;
+    }
+
+    setMode(mode);
+  }
+
+  // Event listener
+  themeToggle?.addEventListener("click", selectTheme, { signal: listenerController.signal });
+
+  // Initialize on page load
+  initTheme();
+
+  // Listen for system preference changes
+  mediaQuery.addEventListener(
+    "change",
+    () => {
+      if (getStoredMode() === "system") {
+        initTheme();
+      }
+    },
+    { signal: listenerController.signal },
+  );
+</script>
+
+<style>
+  /* Theme toggle button */
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem 0.4rem;
+    transition:
+      opacity 0.2s ease,
+      border-color 0.2s ease;
+    color: inherit;
+  }
+
+  .theme-toggle:hover {
+    opacity: 0.9;
+  }
+
+  .theme-toggle:active {
+    opacity: 0.75;
+  }
+
+  .theme-icon {
+    align-items: center;
+    border-radius: 9999px;
+    display: inline-flex;
+    height: 1.8rem;
+    justify-content: center;
+    opacity: 0.55;
+    transition:
+      opacity 0.2s ease,
+      background-color 0.2s ease;
+    width: 1.8rem;
+  }
+
+  .theme-icon[data-active="true"] {
+    background-color: var(--muted);
+    cursor: default;
+    opacity: 1;
+    pointer-events: none;
+  }
+
+  .theme-toggle:hover .theme-icon[data-active="false"] {
+    opacity: 0.72;
+  }
+
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  .theme-icon[data-mode="system"],
+  .theme-icon[data-mode="light"],
+  .theme-icon[data-mode="dark"] {
+    font-size: 1em;
+    line-height: 1;
+  }
+
+  .theme-toggle:focus-visible .theme-icon[data-active="true"] {
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme-toggle,
+    .theme-icon {
+      transition: none;
+    }
+  }
+</style>

@@ -24,13 +24,18 @@
     "sveltekit",
     "astro"
   ],
-  "author": "Clipper",
-  "license": "ISC",
+  "author": "Andreas Söderlund <ciscoheat@gmail.com> (https://blog.encodeart.dev)",
+  "license": "MIT",
+  "bugs": "https://github.com/ciscoheat/clipper-css/issues",
+  "repository": {
+    "url": "https://github.com/ciscoheat/clipper-css"
+  },
   "files": [
     "bin",
     "clipper",
     "templates",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "dependencies": {
     "globby": "^16.1.1",

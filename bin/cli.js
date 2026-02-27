@@ -3,7 +3,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import glob from "fast-glob";
+import { globby } from "globby";
 import prompts from "prompts";
 
 // Use path helpers for ES modules
@@ -53,9 +53,10 @@ async function main() {
   const templateSourceDir = path.join(templatesDir, selectedConfig.templateSrc);
 
   // 3. Scan for existing clipper.css
-  const existingClipperFiles = await glob("**/clipper.css", {
+  // Using globby with gitignore support to avoid manual ignore lists
+  const existingClipperFiles = await globby("**/clipper.css", {
     cwd,
-    ignore: ["node_modules/**", ".git/**", "dist/**", ".astro/**", ".svelte-kit/**", ".next/**"],
+    gitignore: true,
   });
 
   const existingClipperPath = existingClipperFiles.length > 0 ? existingClipperFiles[0] : null;
@@ -65,12 +66,14 @@ async function main() {
     console.log(`\n⚠️  Found existing configuration at: ${existingClipperPath}`);
 
     const newClipperCssPath = path.join(clipperSourceDir, "clipper.css");
-    
+
     let oldContent = "";
     try {
-        oldContent = await fs.readFile(path.join(cwd, existingClipperPath), "utf-8");
-    } catch (e) { console.error("Could not read existing file"); }
-    
+      oldContent = await fs.readFile(path.join(cwd, existingClipperPath), "utf-8");
+    } catch (e) {
+      console.error("Could not read existing file");
+    }
+
     const newContent = await fs.readFile(newClipperCssPath, "utf-8");
 
     const oldVersion = parseVersion(oldContent);
@@ -102,18 +105,18 @@ async function main() {
 
     // Core Clipper Files
     if (await exists(clipperSourceDir)) {
-        const coreFiles = await glob("**/*", { cwd: clipperSourceDir });
-        for (const f of coreFiles) {
-            filesToCopy.push({
-                src: path.join(clipperSourceDir, f),
-                dest: path.join(selectedConfig.clipperDest, f),
-            });
-        }
+      const coreFiles = await globby("**/*", { cwd: clipperSourceDir });
+      for (const f of coreFiles) {
+        filesToCopy.push({
+          src: path.join(clipperSourceDir, f),
+          dest: path.join(selectedConfig.clipperDest, f),
+        });
+      }
     }
 
     // Framework Template Files
     if (await exists(templateSourceDir)) {
-      const templFiles = await glob("**/*", { cwd: templateSourceDir });
+      const templFiles = await globby("**/*", { cwd: templateSourceDir });
       for (const f of templFiles) {
         filesToCopy.push({
           src: path.join(templateSourceDir, f),
@@ -123,8 +126,8 @@ async function main() {
     }
 
     if (filesToCopy.length === 0) {
-        console.warn("No files found to copy.");
-        process.exit(1);
+      console.warn("No files found to copy.");
+      process.exit(1);
     }
 
     console.log(`\nThe following files will be created/updated:`);
@@ -174,14 +177,15 @@ function parseVersion(content) {
  * @param {string} clipperDestRelative
  */
 async function injectImport(cwd, clipperDestRelative) {
-  const cssFiles = await glob("**/*.css", {
+  // Use .gitignore to determine which CSS files to scan (ignore node_modules, build outputs etc)
+  const cssFiles = await globby("**/*.css", {
     cwd,
-    ignore: ["node_modules/**", "dist/**", ".git/**", "public/**", clipperDestRelative + "/**"],
+    gitignore: true,
   });
 
   if (cssFiles.length === 0) {
-      console.log("ℹ️  No CSS files found to inject import.");
-      return;
+    console.log("ℹ️  No CSS files found to inject import.");
+    return;
   }
 
   let patched = false;
@@ -202,10 +206,10 @@ async function injectImport(cwd, clipperDestRelative) {
       // Calculate relative path from this css file to the installed clipper.css
       // clipperDestRelative is usually src/clipper
       // file is usually src/app.css
-      
+
       const clipperCssAbsPath = path.join(cwd, clipperDestRelative, "clipper.css");
       const cssFileDir = path.dirname(absPath);
-      
+
       let relPath = path.relative(cssFileDir, clipperCssAbsPath);
 
       // Ensure "./" prefix if it's in the same directory or simple relative path
@@ -224,12 +228,8 @@ async function injectImport(cwd, clipperDestRelative) {
       await fs.writeFile(absPath, newContent, "utf-8");
       console.log(`✅ Injected import into ${file}`);
       patched = true;
-      break; 
+      break;
     }
-  }
-
-  if (!patched) {
-    console.log(`ℹ️  Could not automatically inject CSS import. Please import ${clipperDestRelative}/clipper.css manually.`);
   }
 }
 

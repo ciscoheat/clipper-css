@@ -13,8 +13,7 @@
   "type": "module",
   "main": "bin/cli.js",
   "bin": {
-    "clipper": "./bin/cli.js",
-    "create-clipper": "./bin/cli.js"
+    "clipper": "./bin/cli.js"
   },
   "keywords": [
     "css",

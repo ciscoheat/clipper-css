@@ -151,4 +151,4 @@ Clipper is intentionally small and unobtrusive. Use Tailwind classes or a UI com
 
 ## Get in touch
 
-Please suggest fixes etc on Github. Improvements can surely be made.
+Please suggest fixes etc on [Github](https://github.com/ciscoheat/clipper-css/issues). Improvements can surely be made.

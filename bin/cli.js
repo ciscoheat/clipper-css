@@ -11,19 +11,16 @@ async function main() {
   const cwd = process.cwd();
 
   // 1. Detect project type
-  const isAstro =
-    (await exists(path.join(cwd, "astro.config.mjs"))) || (await exists(path.join(cwd, "astro.config.ts")));
-
-  const isSvelte =
-    (await exists(path.join(cwd, "svelte.config.js"))) || (await exists(path.join(cwd, "svelte.config.ts")));
-
-  const isNext = (await exists(path.join(cwd, "next.config.js"))) || (await exists(path.join(cwd, "next.config.mjs")));
-
-let type = null;
-  if (isAstro) type = "astro";
-  else if (isSvelte) type = "sveltekit";
-  else if (isNext) type = "next";
+  let type = null;
   
+  if ((await exists(path.join(cwd, "astro.config.mjs"))) || (await exists(path.join(cwd, "astro.config.ts")))) {
+      type = "astro";
+  } else if ((await exists(path.join(cwd, "svelte.config.js"))) || (await exists(path.join(cwd, "svelte.config.ts")))) {
+      type = "sveltekit";
+  } else if ((await exists(path.join(cwd, "next.config.js"))) || (await exists(path.join(cwd, "next.config.mjs")))) {
+      type = "next";
+  }
+
   if (!type) {
       console.error("❌ No supported framework detected (Astro, SvelteKit, Next.js).");
       console.error("   Run this command at the root of a supported project.");
@@ -32,34 +29,41 @@ let type = null;
 
   console.log(`Detected project type: ${type}`);
 
-  // 2. Locate templates directory relative to this script
-  // Considering the script is run from bin/cli.js, templates are ../templates
+  // 2. Configuration for frameworks
+  const config = {
+      astro: {
+          clipperDest: 'src/clipper',
+          templateSrc: 'astro'
+      },
+      sveltekit: {
+          clipperDest: 'src/lib/clipper',
+          templateSrc: 'sveltekit'
+      },
+      next: {
+          clipperDest: 'src/clipper', // fallback
+          templateSrc: 'next'
+      }
+  };
+
+  const selectedConfig = config[type];
   const templatesDir = path.resolve(__dirname, "..", "templates");
+  
+  // 3. Copy Framework Template (Everything from templates/FRAMEWORK to content root)
+  const frameworkTemplateSrc = path.join(templatesDir, selectedConfig.templateSrc);
+  
+  if (await exists(frameworkTemplateSrc)) {
+       console.log(`Installing ${type} template files...`);
+       await copyDir(frameworkTemplateSrc, cwd);
+  } else {
+       console.warn(`⚠️ No template directory found for ${type} at ${frameworkTemplateSrc}`);
+  }
 
-  // 3. Copy base files (Clipper itself)
-  // Always copy src/clipper/* to the correct destination
+  // 4. Copy Base Clipper Files (src/clipper to Configured Destination)
   const clipperSource = path.join(__dirname, "..", "src", "clipper");
-  let clipperDest = path.join(cwd, "src", "clipper");
-
-  if (type === "sveltekit") {
-    clipperDest = path.join(cwd, "src", "lib", "clipper");
-  }
-
-  console.log(`Installing Clipper core to: ${clipperDest}`);
-  await copyDir(clipperSource, clipperDest);
-
-  // 4. Copy framework-specific files (Layouts)
-  if (type === "astro") {
-    const layoutSource = path.join(templatesDir, "astro", "src", "layouts");
-    const layoutDest = path.join(cwd, "src", "layouts");
-    console.log(`Installing Astro layouts to: ${layoutDest}`);
-    await copyDir(layoutSource, layoutDest);
-  } else if (type === "sveltekit") {
-    const layoutSource = path.join(templatesDir, "sveltekit", "src", "lib", "layouts");
-    const layoutDest = path.join(cwd, "src", "lib", "layouts");
-    console.log(`Installing SvelteKit layouts to: ${layoutDest}`);
-    await copyDir(layoutSource, layoutDest);
-  }
+  const clipperDestPath = path.join(cwd, selectedConfig.clipperDest);
+  
+  console.log(`Installing Clipper core to: ${clipperDestPath}`);
+  await copyDir(clipperSource, clipperDestPath);
 
   // 5. Tailwind Configuration Hint
   console.log('\n✅ Clipper installed successfully!');

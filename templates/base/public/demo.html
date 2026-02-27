@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clipper Demo</title>
+    <!-- Use Tailwind Play CDN for instant preview -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(var(--muted))",
+                            foreground: "hsl(var(--muted-foreground))",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(var(--accent))",
+                            foreground: "hsl(var(--accent-foreground))",
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            :root {
+                --background: 0 0% 100%;
+                --foreground: 222.2 84% 4.9%;
+                --card: 0 0% 100%;
+                --card-foreground: 222.2 84% 4.9%;
+                --popover: 0 0% 100%;
+                --popover-foreground: 222.2 84% 4.9%;
+                --primary: 221.2 83.2% 53.3%;
+                --primary-foreground: 210 40% 98%;
+                --secondary: 210 40% 96.1%;
+                --secondary-foreground: 222.2 47.4% 11.2%;
+                --muted: 210 40% 96.1%;
+                --muted-foreground: 215.4 16.3% 46.9%;
+                --accent: 210 40% 96.1%;
+                --accent-foreground: 222.2 47.4% 11.2%;
+                --destructive: 0 84.2% 60.2%;
+                --destructive-foreground: 210 40% 98%;
+                --border: 214.3 31.8% 91.4%;
+                --input: 214.3 31.8% 91.4%;
+                --ring: 221.2 83.2% 53.3%;
+                --radius: 0.5rem;
+            }
+        }
+        
+        @layer components {
+            .btn {
+               @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2;
+            }
+            .btn-primary {
+                 @apply bg-primary text-primary-foreground hover:bg-primary/90;
+            }
+            .btn-secondary {
+                @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+            }
+            .btn-ghost {
+                 @apply hover:bg-accent hover:text-accent-foreground;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground min-h-screen p-8 font-sans antialiased">
+    
+    <div class="max-w-4xl mx-auto space-y-12">
+        <header class="flex items-center justify-between pb-6 border-b border-border">
+            <h1 class="text-3xl font-bold tracking-tight">Clipper Demo</h1>
+            <div class="flex gap-2">
+                 <button class="btn btn-ghost">Log in</button>
+                 <button class="btn btn-primary">Get Started</button>
+            </div>
+        </header>
+
+        <main class="space-y-8">
+            <section class="p-8 bg-card rounded-lg border border-border shadow-sm">
+                <h2 class="text-2xl font-semibold mb-2">Welcome to Clipper</h2>
+                <p class="text-muted-foreground mb-6 max-w-prose">
+                    This is a preview of the Clipper aesthetic running directly in the browser. 
+                    No build step required for this file—just open it to test your tokens.
+                </p>
+                <div class="flex gap-4">
+                    <button class="btn btn-primary">Primary Action</button>
+                    <button class="btn btn-secondary">Secondary Action</button>
+                    <button class="btn btn-ghost">Ghost Button</button>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="flex flex-col space-y-1.5 p-6 border border-border rounded-xl">
+                    <h3 class="font-semibold leading-none tracking-tight">Features</h3>
+                    <p class="text-sm text-muted-foreground">Explore what matches your needs.</p>
+                </div>
+                 <!-- Card 2 -->
+                <div class="flex flex-col space-y-1.5 p-6 border border-border rounded-xl">
+                    <h3 class="font-semibold leading-none tracking-tight">Analytics</h3>
+                    <p class="text-sm text-muted-foreground">Check your data in real-time.</p>
+                </div>
+                 <!-- Card 3 -->
+                <div class="flex flex-col space-y-1.5 p-6 border border-border rounded-xl">
+                    <h3 class="font-semibold leading-none tracking-tight">Settings</h3>
+                    <p class="text-sm text-muted-foreground">Manage your preferences.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

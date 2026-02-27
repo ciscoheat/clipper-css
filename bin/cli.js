@@ -133,8 +133,9 @@ async function main() {
     // --- FLOW 1: NOT FOUND ---
     log(`\n✨ New setup detected`, c.cyan);
 
-    // Gather files to copy
-    const filesToCopy = [];
+    // Gather potential files
+    const allCoreFiles = [];
+    const allTemplateFiles = [];
 
     // Core Clipper Files
     if (await exists(clipperSourceDir)) {
@@ -143,7 +144,7 @@ async function main() {
         ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
       });
       for (const f of coreFiles) {
-        filesToCopy.push({
+        allCoreFiles.push({
           src: path.join(clipperSourceDir, f),
           dest: path.join(selectedConfig.clipperDest, f),
         });
@@ -157,36 +158,63 @@ async function main() {
         ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
       });
       for (const f of templFiles) {
-        filesToCopy.push({
+        allTemplateFiles.push({
           src: path.join(templateSourceDir, f),
           dest: f, // relative to root
         });
       }
     }
 
+    const filesToCopy = [];
+
+    // Question 1: Core Files
+    let copyCore = autoYes;
+    if (allCoreFiles.length > 0) {
+      log(`\nClipper CSS Core Files:`, c.gray);
+      allCoreFiles.forEach((f) => log(` + ${f.dest}`, c.cyan));
+
+      if (!autoYes) {
+        const response = await prompts({
+          type: "confirm",
+          name: "copyCore",
+          message: "Install Clipper CSS core files?",
+          initial: true,
+        });
+        copyCore = response.copyCore;
+      }
+    }
+
+    if (copyCore) {
+      filesToCopy.push(...allCoreFiles);
+    }
+
+    // Question 2: Template Files
+    let copyTemplate = autoYes;
+    if (allTemplateFiles.length > 0) {
+      log(`\nTemplate Files:`, c.gray);
+      allTemplateFiles.forEach((f) => log(` + ${f.dest}`, c.cyan));
+
+      if (!autoYes) {
+        const response = await prompts({
+          type: "confirm",
+          name: "copyTemplate",
+          message: "Install template files?",
+          initial: true,
+        });
+        copyTemplate = response.copyTemplate;
+      }
+    }
+
+    if (copyTemplate) {
+      filesToCopy.push(...allTemplateFiles);
+    }
+
     if (filesToCopy.length === 0) {
-      log(`No files found to copy.`, c.red);
-      process.exit(1);
-    }
-
-    log(`\nThe following files will be created/updated:`, c.gray);
-    filesToCopy.forEach((f) => log(` + ${f.dest}`, c.cyan));
-
-    let proceed = autoYes;
-    if (!autoYes) {
-      const response = await prompts({
-        type: "confirm",
-        name: "proceed",
-        message: "Proceed with installation?",
-        initial: true,
-      });
-      proceed = response.proceed;
-    }
-
-    if (!proceed) {
-      log(`Aborted.`, c.gray);
+      log(`No files selected to install.`, c.gray);
       process.exit(0);
     }
+
+    log(`\nInstalling selected files...`, c.gray);
 
     // Perform Copy
     for (const f of filesToCopy) {

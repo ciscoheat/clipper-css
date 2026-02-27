@@ -1,76 +1,108 @@
 # Clipper
 
-Clipper is a simple tailwind framework for building pages fast without fighting CSS.
-It is designed for designers and developers alike: semantic markup by default, token-driven styling, and just enough utilities to stay productive.
-
-## What Clipper tries to do
-
-Clipper removes repetitive setup work so you can focus on content and visual decisions.  
-Sections, spacing rhythm, typography, and layout constraints are already wired in.
+Clipper is a simple tailwind framework for building pages fast without fighting CSS. It is designed for designers and developers alike: semantic markup by default, token-driven styling, and just enough utilities to stay productive.
 
 You can start with clean HTML and only add utilities when they actually help.
 
 ## Quick start
 
+The best way to install clipper is to run it in a freshly installed framework project with [Tailwind](https://tailwindcss.com/) installed. Clipper currently supports **Astro** and **SvelteKit**.
+
+### Astro
+
+- [How to install Astro](https://docs.astro.build/en/guides/styling/)
+- [How to install Tailwind for Astro](https://docs.astro.build/en/guides/styling/#tailwind)
+
+### SvelteKit
+
+- [How to install SvelteKit](https://svelte.dev/docs/kit/creating-a-project)
+- [How to install Tailwind for SvelteKit](https://svelte.dev/docs/cli/tailwind)
+
+After installation, run this in your project folder:
+
 ```sh
-pnpm install
-pnpm dev
+npx clipper-css
 ```
 
-Build:
+The installation is user-friendly and won't overwrite anything without your permission. You can run it multiple times to update clipper to the latest version (will only overwrite `clipper.css` in that case).
 
-```sh
-pnpm build
-```
+After installing, the root page will display a demo of Clipper's features.
 
 ## Core idea in one example
 
-```astro
----
-import Body from "../layouts/Body.astro";
----
+The section is the fundamental building block. Put these directly below `main`. The rest is pretty much self-explanatory.
 
-<Body title="My Page">
-  <section id="intro">
-    <h1>Hello Clipper</h1>
-    <p class="readable">
-      Start semantic, then add only the few utilities you really need.
-    </p>
-    <div class="row">
-      <a href="#" class="btn">Primary action</a>
-      <a href="#" class="btn btn-outline">Secondary action</a>
-    </div>
-  </section>
-</Body>
+```html
+<body>
+  <header class="header-sticky"></header>
+  <main>
+    <section id="intro">
+      <h1>Hello Clipper</h1>
+      <p class="readable">Start semantic, then add only the few utilities you really need.</p>
+      <div class="row">
+        <a href="/primary" class="btn">Primary action</a>
+        <a href="/secondary" class="btn btn-outline">Secondary action</a>
+      </div>
+    </section>
+  </main>
+  <footer></footer>
+</body>
 ```
 
 ## Spacing (the fluent part)
 
-Spacing is tokenized and fluid via `clamp()`. Use Clipper spacing utilities:
-
-`gap-2xs`, `gap-xs`, `gap-sm`, `gap-base`, `gap-lg`, `gap-xl`, `gap-2xl`
+Spacing is tokenized and fluid via `clamp()`. Use Clipper spacing utilities between `4xs` to `4xl` as normal tailwind classes. `base` is in the middle.
 
 Example:
 
-```astro
-<div class="gap-base">
+```html
+<div class="gap-sm">
   <span>First item</span>
   <span>Second item</span>
   <span>Third item</span>
 </div>
 ```
 
-Change a spacing token once in `src/styles/variables.css`, and rhythm updates everywhere.
+Change spacing tokens in `variables.css` and rhythm updates everywhere.
 
 ## Colors
 
-Colors are also tokenized in `src/styles/variables.css`.
-Use semantic tokens like `--background`, `--foreground`, `--primary`, `--muted`, and `--border` so theme decisions stay centralized and dark mode works properly.
+Colors are also tokenized in `variables.css`, with semantic tokens so theme decisions stay centralized and dark mode works properly. Built-in tokens that can be used directly on the utility classes:
+
+### Base colors
+
+```
+background
+foreground
+accent
+accent-foreground
+muted
+muted-foreground
+```
+
+### Primary color
+
+```
+primary (incl. 50-900)
+primary-foreground
+primary-hover
+primary-muted
+```
+
+### Other
+
+```
+link
+link-hover
+link-underline
+link-underline-hover
+border
+```
 
 Example:
 
 ```html
-<span class="bg-background">First item</span>
+<span class="bg-accent-foreground">First item</span>
 ```
 
 ## Typography
@@ -82,28 +114,41 @@ If a heading needs a different visual size, apply the display class directly:
 <h3 class="h2">Semantically h3, visually h2</h3>
 ```
 
-Body text stays stable (`--text-base`), while display sizes scale fluidly.
+Body text stays stable while header sizes (and spacing) scale fluidly.
+
+## List of utility classes
+
+| Class name      | Function                                      |
+| --------------- | --------------------------------------------- |
+| `row`           | Flex-row with sensible defaults               |
+| `readable`      | Max-width for readable text                   |
+| `full-width`    | To break section children out of `page-width` |
+| `page-width`    | To restore `page-width` to inner content      |
+| `header-sticky` | Simple sticky header                          |
+
+## List of components
+
+Clipper includes three generic reusable primitives, compatible with dark mode, purely for "getting started" convenience. They can be replaced by any UI framework or custom styles.
+
+| Class name        | Function                               |
+| ----------------- | -------------------------------------- |
+| `btn`             | You guessed it!                        |
+| `card`            | You guessed that too                   |
+| `badge`           | You guessed right three times in a row |
+| `btn btn-outline` | Outline button version                 |
 
 ## Where to edit what
 
-### Styling
-
-- `src/styles/variables.css` → tokens (color, type, spacing)
-- `src/styles/components.css` → reusable primitives (`.btn`, `.card`, `.badge`)
-- `src/styles/clipper.css` → foundational behavior - usually no need to change this file
-
-### HTML
-
-- `src/layouts/Html.astro` → document wrapper (`<html>`, `<head>`, font imports, global stylesheet)
-- `src/layouts/Body.astro` → default site shell (`Header` + `<main>` + `Footer`)
-- `src/layouts/Header.astro` → shared header chrome (currently minimal/stub)
-- `src/layouts/Footer.astro` → shared footer chrome (currently minimal/stub)
-- `src/layouts/Demo.astro` → style-guide/demo layout that showcases tokens, spacing, and primitives
-- `src/pages/*.astro` → page content that plugs into `Body.astro`
+- `variables.css` → tokens (color, type, spacing)
+- `components.css` → reusable component (`.btn`, `.card`, `.badge`)
+- `clipper.css` → framework definitions - usually no need to change this file!
 
 ## Design philosophy
 
-Clipper is intentionally small: fewer custom classes, fewer one-off fixes, better defaults.  
-Designers get predictable rhythm and type behavior. Developers get maintainable markup and a clear token system.
+Clipper is intentionally small and unobtrusive. Use Tailwind classes or a UI component framework whenever you need, Clipper won't stand in your way.
 
-If you can express it semantically, do that first. If you need control, use tokens/utilities. If it repeats, make it a primitive.
+> If you can express it semantically, do that first. If you need control, use tokens/utilities. If it repeats, make it a component.
+
+## Get in touch
+
+Please suggest fixes etc on Github. Improvements can surely be made.

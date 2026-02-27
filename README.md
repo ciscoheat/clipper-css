@@ -1,6 +1,6 @@
 # Clipper
 
-Clipper is a simple tailwind framework for building pages fast without fighting CSS. It is designed for designers and developers alike: semantic markup by default, token-driven styling, and just enough utilities to stay productive.
+Clipper is a simple Tailwind framework for building pages fast without fighting CSS. It is designed for designers and developers alike: semantic markup by default, token-driven styling, and just enough utilities to stay productive.
 
 You can start with clean HTML and only add utilities when they actually help.
 

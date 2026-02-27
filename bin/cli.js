@@ -61,7 +61,7 @@ async function main() {
   // 2. Configuration for frameworks
   const config = {
     astro: {
-      clipperDest: "src/clipper",
+      clipperDest: "src/styles",
       templateSrc: "astro",
     },
     sveltekit: {

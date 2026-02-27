@@ -225,6 +225,11 @@
     border-color: var(--border, currentColor);
   }
 
+  /* I mean why not? */
+  button {
+    cursor: pointer;
+  }
+
   :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
     /* Unified keyboard-focus style across interactive controls */
     outline: 2px solid var(--focus-outline-color);

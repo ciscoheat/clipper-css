@@ -140,8 +140,8 @@ Clipper includes three generic reusable primitives, compatible with dark mode, p
 ## Where to edit what
 
 - `variables.css` → tokens (color, type, spacing)
-- `components.css` → reusable component (`.btn`, `.card`, `.badge`)
-- `clipper.css` → framework definitions - usually no need to change this file!
+- `components.css` → reusable components (`.btn`, `.card`, `.badge`)
+- `clipper.css` → framework definitions - usually no need to change this file! Will be updated if `npx clipper-css` is run multiple times.
 
 ## Design philosophy
 

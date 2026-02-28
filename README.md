@@ -10,7 +10,7 @@ The best way to install clipper is to run it in a freshly installed framework pr
 
 ### Astro
 
-- [How to install Astro](https://docs.astro.build/en/guides/styling/)
+- [How to install Astro](https://docs.astro.build/en/install-and-setup/)
 - [How to install Tailwind for Astro](https://docs.astro.build/en/guides/styling/#tailwind)
 
 ### SvelteKit

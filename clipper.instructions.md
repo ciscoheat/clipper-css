@@ -1,18 +1,14 @@
-# AGENTS Guide: Working in Clipper
-
-This guide is for agents making changes to the Clipper repository.
-
-**Goal:** Make safe, minimal, maintainable changes that align with Clipper's philosophy.
-
+---
+name: "Clipper CSS"
+applyTo: "**/*.html,**/*.astro,**/*.svelte,**/*.css,**/*.scss"
+description: "Instructions for working with Clipper, the CSS framework for Tailwind."
 ---
 
-## Clipper philosophy
+# Working in Clipper - The CSS framework for Tailwind
 
-> If you can express it semantically, do that first. If you need control, use tokens/utilities. If it repeats, make it a component.
+This guide is for agents making changes to codebases where Clipper is used as the CSS framework.
 
-Clipper is intentionally small and unobtrusive. It works with Tailwind and doesn't get in the way.
-
----
+**Goal:** Make safe, minimal, maintainable changes that align with Clipper's philosophy: "If you can express it semantically, do that first. If you need control, use tokens/utilities. If it repeats, make it a component."
 
 ## Scope
 
@@ -24,25 +20,21 @@ This guide applies to:
 - Styling and theming changes
 - Layout/header/footer/navigation changes
 
----
-
 ## Core principles
 
-1. **Semantic first** — Use semantic HTML and preserve accessibility
-2. **Minimal changes** — Change as few lines as possible to achieve the goal
-3. **Token-driven** — Use design tokens from `variables.css`, not arbitrary values
-4. **Utility-first** — Use Tailwind utilities for page-specific styling
-5. **Component when it repeats** — Only extract reusable primitives to `components.css`
-
----
+- **Semantic first** — Use semantic HTML and preserve accessibility
+- **Minimal changes** — Change as few lines as possible to achieve the goal
+- **Token-driven** — Use design tokens from `variables.css`, not arbitrary values
+- **Utility-first** — Use Tailwind utilities for page-specific styling
+- **Component when it repeats** — Only extract reusable primitives to `components.css`
 
 ## Project architecture
 
 ### File structure
 
 - `src/styles/variables.css` → design tokens (color, spacing, typography) + Tailwind v4 `@theme` exports
-- `src/styles/clipper.css` → framework foundations - no need to change this file unless explicitly asked
 - `src/styles/components.css` → reusable component primitives (`.btn`, `.card`, `.badge`)
+- `src/styles/clipper.css` → framework foundations - no need to change this file unless explicitly asked
 
 ## Styling rules
 
@@ -53,6 +45,8 @@ This guide applies to:
 - Only add to `components.css` if the pattern repeats across pages
 
 ### Components in `components.css`
+
+**NOTE:** If another UI framework is being used (e.g. Material UI, Radix, Daisy UI), do not use `components.css` - stick to that framework's components.
 
 **Allowed** — Generic, reusable primitives:
 
@@ -69,8 +63,6 @@ This guide applies to:
 
 If it's one-off, keep it as utilities in markup.
 
----
-
 ## Tokens and spacing
 
 ### Color tokens
@@ -85,10 +77,12 @@ Use semantic tokens from `variables.css`:
 
 **Primary colors:**
 
-- `primary` (including 50-900 shades)
+- `primary` (500 is usually the base color, with the other 50-900 shades)
 - `primary-foreground`
 - `primary-hover`
 - `primary-muted`
+
+Same goes for `secondary` and `tertiary` if they exist in the project.
 
 **Other:**
 
@@ -102,11 +96,11 @@ Use semantic tokens from `variables.css`:
 
 - `4xs`, `3xs`, `2xs`, `xs`, `sm`, `base`, `lg`, `xl`, `2xl`, `3xl`, `4xl`
 
-Examples: `gap-sm`, `gap-base`, `gap-xl`
+Examples: `gap-sm`, `pb-xl`.
+
+**Note** that `base` is the default spacing unit for all elements except `section`, and should not be added explicitly to keep the markup clean.
 
 **Never use** Tailwind's numeric scale (`gap-1`, `gap-2`, `gap-4`, etc.) — it bypasses the fluid spacing system.
-
----
 
 ## Typography
 
@@ -127,7 +121,7 @@ Body text stays stable while heading sizes scale fluidly via `clamp()`.
 
 | Class           | Function                              |
 | --------------- | ------------------------------------- |
-| `row`           | Flex-row with sensible defaults       |
+| `row`           | `flex-row` with sensible defaults     |
 | `readable`      | Max-width for readable text           |
 | `full-width`    | Break children out of `page-width`    |
 | `page-width`    | Restore `page-width` to inner content |
@@ -151,13 +145,13 @@ Body text stays stable while heading sizes scale fluidly via `clamp()`.
 
 When working from a design/screenshot:
 
-1. Extract semantic structure (`header`, `main`, `section`, `footer`)
-2. Implement with minimal wrappers
-3. Map visual decisions to existing tokens
-4. Use utilities for page-specific layout/spacing/typography
-5. Add to `components.css` only if the pattern truly repeats
-6. Validate desktop/mobile + dark mode
-7. Run `pnpm build` to verify
+- Extract semantic structure (`header`, `main`, `section`, `footer`)
+- Implement with minimal wrappers
+- Map visual decisions to existing tokens
+- Use utilities for page-specific layout/spacing/typography
+- Add to `components.css` only if the pattern truly repeats
+- Validate desktop/mobile + dark mode
+- Run `pnpm build` to verify
 
 ## Definition of done
 
@@ -175,7 +169,7 @@ When working from a design/screenshot:
 
 - Reuse existing primitives first
 - Keep markup semantic and lean - don't add utilities unless required
-- Use Clipper's spacing utilities (`gap-sm`, `gap-base`, `mb-xl` etc.)
+- Use Clipper's spacing utilities (`gap-sm`, `mb-xl` etc.)
 - Use utilities for page styling
 - Centralize colors in tokens
 
@@ -186,3 +180,4 @@ When working from a design/screenshot:
 - Hardcode colors when tokens exist
 - Use Tailwind's numeric gap utilities (`gap-1`, `gap-2`, etc.)
 - Add unrelated features beyond the request
+- Use inline styles or arbitrary values instead of tokens/utilities

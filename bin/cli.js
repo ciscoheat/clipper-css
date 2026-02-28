@@ -306,7 +306,7 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
 
   if (!patched) {
     log(
-      `ℹ️  Could not automatically inject CSS import.\n   Please import ${clipperDestRelative}/clipper.css manually.`,
+      `ℹ️  Could not automatically inject CSS import. Is Tailwind installed?\n   Please import ${clipperDestRelative}/clipper.css manually.`,
       c.gray,
     );
   }

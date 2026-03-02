@@ -6,6 +6,8 @@ description: "Instructions for working with Clipper, the CSS framework for Tailw
 
 # Working in Clipper - The CSS framework for Tailwind
 
+- Version: v0.1.3
+
 This guide is for agents making changes to codebases where Clipper is used as the CSS framework.
 
 **Goal:** Make safe, minimal, maintainable changes that align with Clipper's philosophy: "If you can express it semantically, do that first. If you need control, use tokens/utilities. If it repeats, make it a component."

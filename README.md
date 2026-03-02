@@ -124,6 +124,9 @@ Body text stays stable while header sizes (and spacing) scale fluidly.
 | `readable`      | Max-width for readable text                   |
 | `full-width`    | To break section children out of `page-width` |
 | `page-width`    | To restore `page-width` to inner content      |
+| `trim-top`      | Trim padding and margin of first child        |
+| `trim-bottom`   | Trim padding and margin of last child         |
+| `trim`          | Trim padding and margin of both               |
 | `header-sticky` | Simple sticky header                          |
 
 ## List of components

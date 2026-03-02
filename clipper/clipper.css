@@ -312,6 +312,28 @@
   }
 }
 
+@utility trim-top {
+  > :first-child {
+    margin-top: 0;
+    margin-block-start: 0;
+    padding-top: 0;
+    padding-block-start: 0;
+  }
+}
+
+@utility trim-bottom {
+  > :last-child {
+    margin-bottom: 0;
+    margin-block-end: 0;
+    padding-bottom: 0;
+    padding-block-end: 0;
+  }
+}
+
+@utility trim {
+  @apply trim-top trim-bottom;
+}
+
 /* Opt-in container query utility */
 @utility cq {
   container-type: inline-size;

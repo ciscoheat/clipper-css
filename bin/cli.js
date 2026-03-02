@@ -51,7 +51,7 @@ async function main() {
   }
 
   if (!type) {
-    log(`❌ No supported framework detected\n   Supported: Astro, SvelteKit, Next.js`, `${c.red}${c.bright}`);
+    log(`❌ No supported framework detected\n   Supported: Astro, SvelteKit`, `${c.red}${c.bright}`);
     log(`   Run this command at the root of a supported project.`, c.gray);
     process.exit(1);
   }
@@ -94,6 +94,7 @@ async function main() {
     log(`\n⚠️  Found existing configuration\n   ${existingClipperPath}`, c.yellow);
 
     const newClipperCssPath = path.join(clipperSourceDir, "clipper.css");
+    const newClipperInstructionsPath = path.join(__dirname, "..", "clipper.instructions.md");
 
     let oldContent = "";
     try {
@@ -113,21 +114,45 @@ async function main() {
 
     let overwrite = isNewer;
 
-    if (isNewer && !autoYes) {
-      const response = await prompts({
-        type: "confirm",
-        name: "overwrite",
-        message: "Do you want to overwrite clipper.css with the latest version?",
-        initial: true,
-      });
-      overwrite = response.overwrite;
-    }
+    if (isNewer) {
+      if (!autoYes) {
+        const response = await prompts({
+          type: "confirm",
+          name: "overwrite",
+          message: "Overwrite clipper.css with the latest version?",
+          initial: true,
+        });
+        overwrite = response.overwrite;
+      }
 
-    if (overwrite) {
-      await fs.copyFile(newClipperCssPath, path.join(cwd, existingClipperPath));
-      log(`✅ Updated clipper.css`, c.green);
+      if (overwrite) {
+        await fs.copyFile(newClipperCssPath, path.join(cwd, existingClipperPath));
+        log(`✅ Updated clipper.css`, c.green);
+      } else {
+        log(`Skipping clipper.css update.`, c.gray);
+      }
+
+      if (!autoYes) {
+        const response = await prompts({
+          type: "confirm",
+          name: "overwrite",
+          message: "Overwrite clipper.instructions.md with the latest version?",
+          initial: true,
+        });
+        overwrite = response.overwrite;
+      }
+
+      if (overwrite) {
+        await fs.copyFile(
+          newClipperInstructionsPath,
+          path.join(cwd, ".github", "instructions", "clipper.instructions.md"),
+        );
+        log(`✅ Updated clipper.instructions.md`, c.green);
+      } else {
+        log(`Skipping clipper.instructions.md update.`, c.gray);
+      }
     } else {
-      log(`Skipping update.`, c.gray);
+      log(`Clipper is up to date. No action needed.`, c.green);
     }
   } else {
     // --- FLOW 1: NOT FOUND ---

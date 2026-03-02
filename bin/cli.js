@@ -149,6 +149,11 @@ async function main() {
           dest: path.join(selectedConfig.clipperDest, f),
         });
       }
+      // Instructions file
+      allCoreFiles.push({
+        src: path.join(__dirname, "..", "clipper.instructions.md"),
+        dest: path.join(".github", "instructions", "clipper.instructions.md"),
+      });
     }
 
     // Framework Template Files

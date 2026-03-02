@@ -34,7 +34,8 @@
     "clipper",
     "templates",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "clipper.instructions.md"
   ],
   "dependencies": {
     "globby": "^16.1.1",

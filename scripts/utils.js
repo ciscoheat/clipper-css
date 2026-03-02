@@ -13,9 +13,10 @@ const projectRoot = path.resolve(__dirname, "..");
  */
 async function clean() {
   try {
-    const srcFolders = await globby(["tests/*/src"], {
+    const srcFolders = await globby(["tests/*/*"], {
       cwd: projectRoot,
       onlyDirectories: true,
+      dot: true,
     });
 
     if (srcFolders.length === 0) {

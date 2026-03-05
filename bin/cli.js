@@ -22,6 +22,17 @@ const colors = {
 
 const c = colors; // shorthand
 
+const coreExtraFiles = [
+  {
+    src: "clipper.instructions.md",
+    dest: path.join(".github", "instructions", "clipper.instructions.md"),
+  },
+  {
+    src: "SKILL.md",
+    dest: path.join(".github", "skills", "copy-website-to-clipper", "SKILL.md"),
+  },
+];
+
 // Helper to automatically reset colors after logging
 function log(message, color = "") {
   // Replace any internal ._reset patterns with nothing since we'll reset at the end
@@ -95,6 +106,7 @@ async function main() {
 
     const newClipperCssPath = path.join(clipperSourceDir, "clipper.css");
     const newClipperInstructionsPath = path.join(__dirname, "..", "clipper.instructions.md");
+    const newSkillPath = path.join(__dirname, "..", "SKILL.md");
 
     let oldContent = "";
     try {
@@ -115,42 +127,35 @@ async function main() {
     let overwrite = isNewer;
 
     if (isNewer) {
-      if (!autoYes) {
-        const response = await prompts({
-          type: "confirm",
-          name: "overwrite",
-          message: "Overwrite clipper.css with the latest version?",
-          initial: true,
-        });
-        overwrite = response.overwrite;
-      }
+      overwrite = await copyWithOverwritePrompt({
+        autoYes,
+        initialOverwrite: overwrite,
+        message: "Overwrite clipper.css with the latest version?",
+        src: newClipperCssPath,
+        dest: path.join(cwd, existingClipperPath),
+        successMessage: "✅ Updated clipper.css",
+        skipMessage: "Skipping clipper.css update.",
+      });
 
-      if (overwrite) {
-        await fs.copyFile(newClipperCssPath, path.join(cwd, existingClipperPath));
-        log(`✅ Updated clipper.css`, c.green);
-      } else {
-        log(`Skipping clipper.css update.`, c.gray);
-      }
+      overwrite = await copyWithOverwritePrompt({
+        autoYes,
+        initialOverwrite: overwrite,
+        message: "Overwrite clipper.instructions.md with the latest version?",
+        src: newClipperInstructionsPath,
+        dest: path.join(cwd, ".github", "instructions", "clipper.instructions.md"),
+        successMessage: "✅ Updated clipper.instructions.md",
+        skipMessage: "Skipping clipper.instructions.md update.",
+      });
 
-      if (!autoYes) {
-        const response = await prompts({
-          type: "confirm",
-          name: "overwrite",
-          message: "Overwrite clipper.instructions.md with the latest version?",
-          initial: true,
-        });
-        overwrite = response.overwrite;
-      }
-
-      if (overwrite) {
-        await fs.copyFile(
-          newClipperInstructionsPath,
-          path.join(cwd, ".github", "instructions", "clipper.instructions.md"),
-        );
-        log(`✅ Updated clipper.instructions.md`, c.green);
-      } else {
-        log(`Skipping clipper.instructions.md update.`, c.gray);
-      }
+      await copyWithOverwritePrompt({
+        autoYes,
+        initialOverwrite: overwrite,
+        message: "Overwrite SKILL.md with the latest version?",
+        src: newSkillPath,
+        dest: path.join(cwd, ".github", "skills", "copy-website-to-clipper", "SKILL.md"),
+        successMessage: "✅ Updated SKILL.md",
+        skipMessage: "Skipping SKILL.md update.",
+      });
     } else {
       log(`Clipper is up to date. No action needed.`, c.green);
     }
@@ -174,11 +179,12 @@ async function main() {
           dest: path.join(selectedConfig.clipperDest, f),
         });
       }
-      // Instructions file
-      allCoreFiles.push({
-        src: path.join(__dirname, "..", "clipper.instructions.md"),
-        dest: path.join(".github", "instructions", "clipper.instructions.md"),
-      });
+      for (const f of coreExtraFiles) {
+        allCoreFiles.push({
+          src: path.join(__dirname, "..", f.src),
+          dest: f.dest,
+        });
+      }
     }
 
     // Framework Template Files
@@ -364,6 +370,30 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
       c.gray,
     );
   }
+}
+
+async function copyWithOverwritePrompt({ autoYes, initialOverwrite, message, src, dest, successMessage, skipMessage }) {
+  let overwrite = initialOverwrite;
+
+  if (!autoYes) {
+    const response = await prompts({
+      type: "confirm",
+      name: "overwrite",
+      message,
+      initial: true,
+    });
+    overwrite = response.overwrite;
+  }
+
+  if (overwrite) {
+    await fs.mkdir(path.dirname(dest), { recursive: true });
+    await fs.copyFile(src, dest);
+    log(successMessage, c.green);
+  } else {
+    log(skipMessage, c.gray);
+  }
+
+  return overwrite;
 }
 
 /**

@@ -34,7 +34,7 @@ async function main() {
   const autoYes = process.argv.includes("-y") || process.argv.includes("--yes");
 
   // Print header
-  log(`\n  ✨ Clipper CSS Installer ✨\n`, `${c.cyan}${c.bright}`);
+  log(`\n✨ Clipper CSS Installer ✨\n`, `${c.cyan}${c.bright}`);
 
   // Detect dev mode: if clipper/ source directory exists relative to bin/, we're in development
   const devMode = await exists(path.resolve(__dirname, "..", "clipper"));
@@ -195,6 +195,32 @@ async function main() {
       }
     }
 
+    {
+      // Pre-check Tailwind import before copying files so users can abort if needed
+      const hasTailwindImport = await scanForTailwindImport(cwd, devMode);
+      if (!hasTailwindImport) {
+        log(`\n⚠️  No @import \"tailwindcss\" found in existing CSS files.`, c.yellow);
+        log(`   If Tailwind is not installed yet, answer no and run this installer later.`, c.yellow);
+
+        if (!autoYes) {
+          const response = await prompts({
+            type: "confirm",
+            name: "continueInstall",
+            message: "Continue installation anyway?",
+            initial: false,
+          });
+
+          if (!response.continueInstall) {
+            log(`Installation cancelled.`, c.gray);
+            process.exit(0);
+          }
+        } else {
+          log(`   Continuing in 5 seconds...`, c.gray);
+          await sleep(5000);
+        }
+      }
+    }
+
     const filesToCopy = [];
 
     // Question 1: Core Files
@@ -280,7 +306,7 @@ function parseVersion(content) {
  */
 async function injectImport(cwd, clipperDestRelative, devMode) {
   // Use .gitignore or custom ignore based on dev mode
-  const cssFiles = await globby("**/*.css", {
+  const cssFiles = await globby("**/*.{css,scss}", {
     cwd,
     ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
   });
@@ -296,8 +322,6 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
     const absPath = path.join(cwd, file);
     let content = await fs.readFile(absPath, "utf-8");
 
-    // Regex to match @import "tailwindcss" or 'tailwindcss' or similar
-    // Matches: @import "tailwindcss"; OR @import 'tailwindcss'
     const tailwindImportRegex = /@import\s+['"]tailwindcss['"]\s*;?/i;
     const match = content.match(tailwindImportRegex);
 
@@ -340,6 +364,37 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
       c.gray,
     );
   }
+}
+
+/**
+ * Scans CSS files for a Tailwind import
+ * @param {string} cwd
+ * @param {boolean} devMode
+ */
+async function scanForTailwindImport(cwd, devMode) {
+  const cssFiles = await globby("**/*.css", {
+    cwd,
+    ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
+  });
+
+  const tailwindImportRegex = /@import\s+['"]tailwindcss['"]\s*;?/i;
+
+  for (const file of cssFiles) {
+    const absPath = path.join(cwd, file);
+    const content = await fs.readFile(absPath, "utf-8");
+    if (tailwindImportRegex.test(content)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * @param {number} ms
+ */
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**

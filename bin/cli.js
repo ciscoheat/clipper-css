@@ -29,7 +29,7 @@ const coreExtraFiles = [
   },
   {
     src: "SKILL.md",
-    dest: path.join(".github", "skills", "copy-website-to-clipper", "SKILL.md"),
+    dest: path.join(".github", "skills", "clipper-convert-website", "SKILL.md"),
   },
 ];
 
@@ -152,7 +152,7 @@ async function main() {
         initialOverwrite: overwrite,
         message: "Overwrite SKILL.md with the latest version?",
         src: newSkillPath,
-        dest: path.join(cwd, ".github", "skills", "copy-website-to-clipper", "SKILL.md"),
+        dest: path.join(cwd, ".github", "skills", "clipper-convert-website", "SKILL.md"),
         successMessage: "✅ Updated SKILL.md",
         skipMessage: "Skipping SKILL.md update.",
       });
@@ -180,8 +180,14 @@ async function main() {
         });
       }
       for (const f of coreExtraFiles) {
+        const extraFileSrc = path.join(__dirname, "..", f.src);
+        if (!(await exists(extraFileSrc))) {
+          log(`⚠️  Missing optional file in package: ${f.src}. Skipping.`, c.yellow);
+          continue;
+        }
+
         allCoreFiles.push({
-          src: path.join(__dirname, "..", f.src),
+          src: extraFileSrc,
           dest: f.dest,
         });
       }
@@ -280,6 +286,11 @@ async function main() {
 
     // Perform Copy
     for (const f of filesToCopy) {
+      if (!(await exists(f.src))) {
+        log(`⚠️  Missing source file: ${f.src}. Skipping.`, c.yellow);
+        continue;
+      }
+
       const absDest = path.join(cwd, f.dest);
       await fs.mkdir(path.dirname(absDest), { recursive: true });
       await fs.copyFile(f.src, absDest);
@@ -373,6 +384,11 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
 }
 
 async function copyWithOverwritePrompt({ autoYes, initialOverwrite, message, src, dest, successMessage, skipMessage }) {
+  if (!(await exists(src))) {
+    log(`⚠️  Missing source file: ${src}. Skipping.`, c.yellow);
+    return false;
+  }
+
   let overwrite = initialOverwrite;
 
   if (!autoYes) {

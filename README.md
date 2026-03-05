@@ -146,6 +146,10 @@ Clipper includes three generic reusable primitives, compatible with dark mode, p
 - `components.css` → reusable components (`.btn`, `.card`, `.badge`)
 - `clipper.css` → framework definitions - usually no need to change this file! Will be updated if `npx clipper-css` is run multiple times.
 
+## Skills and instructions
+
+The installations comes with an [instructions file](https://code.visualstudio.com/docs/copilot/customization/custom-instructions) for AI Agents, copied to `.github/instructions/clipper.instructions.md` and a [skill](https://code.visualstudio.com/docs/copilot/customization/agent-skills) called `clipper-convert-website` for converting websites to Clipper, copied to `.github/skills/clipper-convert-website/SKILL.md`.
+
 ## Design philosophy
 
 Clipper is intentionally small and unobtrusive. Use Tailwind classes or a UI component framework whenever you need, Clipper won't stand in your way.

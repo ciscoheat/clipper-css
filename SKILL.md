@@ -1,6 +1,6 @@
 ---
-name: copy-website-to-clipper
-description: Copy a screenshot or html file to the Clipper CSS framework in the web framework of your choice (Astro, SvelteKit, etc).
+name: clipper-convert-website
+description: Convert a screenshot or html file to the Clipper CSS framework in the web framework of your choice (Astro, SvelteKit, etc).
 disable-model-invocation: true
 ---
 

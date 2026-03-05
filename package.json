@@ -1,6 +1,6 @@
 {
   "name": "clipper-css",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Clipper is a simple Tailwind framework for building pages without fighting CSS and drowning in utility classes.",
   "scripts": {
     "clean": "node scripts/utils.js clean",

@@ -32,11 +32,10 @@
   "files": [
     "bin",
     "clipper",
+    "extras",
     "templates",
     "README.md",
-    "LICENSE",
-    "clipper.instructions.md",
-    "SKILL.md"
+    "LICENSE"
   ],
   "dependencies": {
     "globby": "^16.1.1",

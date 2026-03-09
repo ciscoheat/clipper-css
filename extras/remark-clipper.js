@@ -93,6 +93,9 @@ function rewriteChildren(children, options) {
       continue;
     }
 
+    // No column attribute: keep content as-is but still apply markdownContentClass to the section
+    const sectionProps = withMergedClasses(open.properties, options.markdownContentClass ?? "");
+    children[index] = htmlNode(openTag("section", sectionProps));
     index = closeIndex + 1;
   }
 }

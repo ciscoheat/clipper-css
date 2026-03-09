@@ -5,6 +5,7 @@
   "scripts": {
     "clean": "node scripts/utils.js clean",
     "build": "node scripts/utils.js update-version",
+    "test": "node --test tests/remark-clipper.test.js",
     "test:astro": "cd tests/astro && node ../../bin/cli.js",
     "test:sveltekit": "cd tests/sveltekit && node ../../bin/cli.js",
     "version": "npm run build && git add clipper/clipper.css",
@@ -40,5 +41,11 @@
   "dependencies": {
     "globby": "^16.1.1",
     "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "rehype-stringify": "^10.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5"
   }
 }

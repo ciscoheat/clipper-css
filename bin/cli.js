@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// @ts-check
+
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,6 +26,14 @@ const c = colors; // shorthand
 
 const coreExtraFiles = [
   {
+    src: "remark-clipper.js",
+    dest: {
+      astro: path.join("src", "plugins", "remark-clipper.js"),
+      sveltekit: path.join("src", "lib", "plugins", "remark-clipper.js"),
+      next: path.join("src", "plugins", "remark-clipper.js"),
+    },
+  },
+  {
     src: "clipper.instructions.md",
     dest: path.join(".github", "instructions", "clipper.instructions.md"),
   },
@@ -33,7 +43,11 @@ const coreExtraFiles = [
   },
 ];
 
-// Helper to automatically reset colors after logging
+/**
+ * Helper to automatically reset colors after logging
+ * @param {string} message
+ * @param {string} [color]
+ */
 function log(message, color = "") {
   // Replace any internal ._reset patterns with nothing since we'll reset at the end
   const cleaned = message.replace(/\x1b\[0m/g, "");
@@ -50,18 +64,17 @@ async function main() {
   // Detect dev mode: if clipper/ source directory exists relative to bin/, we're in development
   const devMode = await exists(path.resolve(__dirname, "..", "clipper"));
 
-  // 1. Detect project type
-  let type = null;
+  // Detect project type
+  /** @type {"astro" | "sveltekit" | "next"} */
+  let type;
 
   if ((await exists(path.join(cwd, "astro.config.mjs"))) || (await exists(path.join(cwd, "astro.config.ts")))) {
     type = "astro";
   } else if ((await exists(path.join(cwd, "svelte.config.js"))) || (await exists(path.join(cwd, "svelte.config.ts")))) {
     type = "sveltekit";
-  } else if ((await exists(path.join(cwd, "next.config.js"))) || (await exists(path.join(cwd, "next.config.mjs")))) {
+  } /* else if ((await exists(path.join(cwd, "next.config.js"))) || (await exists(path.join(cwd, "next.config.mjs")))) {
     type = "next";
-  }
-
-  if (!type) {
+  } */ else {
     log(`❌ No supported framework detected\n   Supported: Astro, SvelteKit`, `${c.red}${c.bright}`);
     log(`   Run this command at the root of a supported project.`, c.gray);
     process.exit(1);
@@ -104,9 +117,8 @@ async function main() {
     // --- FLOW 2: FOUND ---
     log(`\n⚠️  Found existing configuration\n   ${existingClipperPath}`, c.yellow);
 
+    const extrasDir = path.join(__dirname, "..", "extras");
     const newClipperCssPath = path.join(clipperSourceDir, "clipper.css");
-    const newClipperInstructionsPath = path.join(__dirname, "..", "clipper.instructions.md");
-    const newSkillPath = path.join(__dirname, "..", "SKILL.md");
 
     let oldContent = "";
     try {
@@ -119,7 +131,7 @@ async function main() {
 
     const oldVersion = parseVersion(oldContent);
     const newVersion = parseVersion(newContent);
-    const isNewer = oldVersion && newVersion && oldVersion < newVersion;
+    const isNewer = !!(oldVersion && newVersion && oldVersion < newVersion);
 
     log(`   Current version: ${oldVersion || "unknown"}`);
     log(`   New version:     ${newVersion || "unknown"}`);
@@ -137,25 +149,19 @@ async function main() {
         skipMessage: "Skipping clipper.css update.",
       });
 
-      overwrite = await copyWithOverwritePrompt({
-        autoYes,
-        initialOverwrite: overwrite,
-        message: "Overwrite clipper.instructions.md with the latest version?",
-        src: newClipperInstructionsPath,
-        dest: path.join(cwd, ".github", "instructions", "clipper.instructions.md"),
-        successMessage: "✅ Updated clipper.instructions.md",
-        skipMessage: "Skipping clipper.instructions.md update.",
-      });
-
-      await copyWithOverwritePrompt({
-        autoYes,
-        initialOverwrite: overwrite,
-        message: "Overwrite SKILL.md with the latest version?",
-        src: newSkillPath,
-        dest: path.join(cwd, ".github", "skills", "clipper-convert-website", "SKILL.md"),
-        successMessage: "✅ Updated SKILL.md",
-        skipMessage: "Skipping SKILL.md update.",
-      });
+      for (const f of coreExtraFiles) {
+        const src = path.join(extrasDir, f.src);
+        const dest = typeof f.dest === "string" ? f.dest : f.dest[type];
+        overwrite = await copyWithOverwritePrompt({
+          autoYes,
+          initialOverwrite: overwrite,
+          message: `Overwrite ${f.src} with the latest version?`,
+          src,
+          dest: path.join(cwd, dest),
+          successMessage: `✅ Updated ${f.src}`,
+          skipMessage: `Skipping ${f.src} update.`,
+        });
+      }
     } else {
       log(`Clipper is up to date. No action needed.`, c.green);
     }
@@ -180,7 +186,7 @@ async function main() {
         });
       }
       for (const f of coreExtraFiles) {
-        const extraFileSrc = path.join(__dirname, "..", f.src);
+        const extraFileSrc = path.join(__dirname, "..", "extras", f.src);
         if (!(await exists(extraFileSrc))) {
           log(`⚠️  Missing optional file in package: ${f.src}. Skipping.`, c.yellow);
           continue;
@@ -188,7 +194,7 @@ async function main() {
 
         allCoreFiles.push({
           src: extraFileSrc,
-          dest: f.dest,
+          dest: typeof f.dest === "string" ? f.dest : f.dest[type],
         });
       }
     }
@@ -365,7 +371,7 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
       const injection = `\n@import '${relPath}';`;
 
       // Insert after the match
-      const insertPos = match.index + match[0].length;
+      const insertPos = (match.index ?? 0) + match[0].length;
       const newContent = content.slice(0, insertPos) + injection + content.slice(insertPos);
 
       await fs.writeFile(absPath, newContent, "utf-8");
@@ -383,6 +389,23 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
   }
 }
 
+/**
+ * @typedef {Object} CopyWithOverwriteOptions
+ * @property {boolean} autoYes
+ * @property {boolean} initialOverwrite
+ * @property {string} message
+ * @property {string} src
+ * @property {string} dest
+ * @property {string} successMessage
+ * @property {string} skipMessage
+ */
+
+/**
+ * Copies a file, prompting for confirmation unless autoYes is set.
+ * Returns whether the file was actually copied.
+ * @param {CopyWithOverwriteOptions} options
+ * @returns {Promise<boolean>}
+ */
 async function copyWithOverwritePrompt({ autoYes, initialOverwrite, message, src, dest, successMessage, skipMessage }) {
   if (!(await exists(src))) {
     log(`⚠️  Missing source file: ${src}. Skipping.`, c.yellow);

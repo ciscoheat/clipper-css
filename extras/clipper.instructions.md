@@ -119,16 +119,16 @@ Body text stays stable while heading sizes scale fluidly via `clamp()`.
 
 ## Utility classes
 
-| Class           | Function                               |
-| --------------- | -------------------------------------- |
-| `row`           | `flex-row` with sensible defaults      |
-| `readable`      | Max-width for readable text            |
-| `full-width`    | Break children out of `page-width`     |
-| `page-width`    | Restore `page-width` to inner content  |
-| `trim-top`      | Trim padding and margin of first child |
-| `trim-bottom`   | Trim padding and margin of last child  |
-| `trim`          | Trim padding and margin of both        |
-| `header-sticky` | Simple sticky header                   |
+| Class           | Function                                |
+| --------------- | --------------------------------------- |
+| `row`           | `flex-row` with sensible defaults       |
+| `readable`      | Max-width for readable text             |
+| `full-width`    | Break children out of max page width    |
+| `page-width`    | Restore max page width to inner content |
+| `trim-top`      | Trim padding and margin of first child  |
+| `trim-bottom`   | Trim padding and margin of last child   |
+| `trim`          | Trim padding and margin of both         |
+| `header-sticky` | Simple sticky header                    |
 
 ## Data modeling
 

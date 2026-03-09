@@ -118,16 +118,16 @@ Body text stays stable while header sizes (and spacing) scale fluidly.
 
 ## List of utility classes
 
-| Class name      | Function                                      |
-| --------------- | --------------------------------------------- |
-| `row`           | Flex-row with sensible defaults               |
-| `readable`      | Max-width for readable text                   |
-| `full-width`    | To break section children out of `page-width` |
-| `page-width`    | To restore `page-width` to inner content      |
-| `trim-top`      | Trim padding and margin of first child        |
-| `trim-bottom`   | Trim padding and margin of last child         |
-| `trim`          | Trim padding and margin of both               |
-| `header-sticky` | Simple sticky header                          |
+| Class           | Function                                |
+| --------------- | --------------------------------------- |
+| `row`           | `flex-row` with sensible defaults       |
+| `readable`      | Max-width for readable text             |
+| `full-width`    | Break children out of max page width    |
+| `page-width`    | Restore max page width to inner content |
+| `trim-top`      | Trim padding and margin of first child  |
+| `trim-bottom`   | Trim padding and margin of last child   |
+| `trim`          | Trim padding and margin of both         |
+| `header-sticky` | Simple sticky header                    |
 
 ## List of components
 
@@ -146,7 +146,7 @@ Clipper includes three generic reusable primitives, compatible with dark mode, p
 - `components.css` → reusable components (`.btn`, `.card`, `.badge`)
 - `clipper.css` → framework definitions - usually no need to change this file! Will be updated if `npx clipper-css` is run multiple times.
 
-## Skills and instructions
+## Skills and instructions for AI
 
 The installations comes with an [instructions file](https://code.visualstudio.com/docs/copilot/customization/custom-instructions) for AI Agents, copied to `.github/instructions/clipper.instructions.md` and a [skill](https://code.visualstudio.com/docs/copilot/customization/agent-skills) called `clipper-convert-website` for converting websites to Clipper, copied to `.github/skills/clipper-convert-website/SKILL.md`.
 

@@ -6,12 +6,14 @@
  * @property {string | string[]} [wrapperClasses]
  * @property {string} [contentTag]
  * @property {string | string[]} [contentClasses]
+ * @property {string} [markdownContentClass]
  */
 const remarkClipperDefaultOptions = {
   wrapperTag: "div",
   wrapperClasses: "grid gap-2xl lg:grid-cols-2 lg:items-center",
   contentTag: "div",
   contentClasses: "",
+  markdownContentClass: "markdown-content",
 };
 
 /**
@@ -115,7 +117,7 @@ function buildSectionReplacement(sectionOpen, sectionChildren, options) {
 
   const outerProps = withMergedClasses({}, options.wrapperClasses ?? "");
   const contentProps = withMergedClasses({}, options.contentClasses ?? "");
-  const sectionProps = withMergedClasses(sectionOpen.properties, "markdown-content");
+  const sectionProps = withMergedClasses(sectionOpen.properties, options.markdownContentClass ?? "");
   delete sectionProps[attrName];
 
   const wrapperTag = options.wrapperTag ?? "div";

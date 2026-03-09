@@ -9,7 +9,7 @@
     "test:astro": "cd tests/astro && node ../../bin/cli.js",
     "test:sveltekit": "cd tests/sveltekit && node ../../bin/cli.js",
     "version": "npm run build && git add clipper/clipper.css",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && npm run test"
   },
   "type": "module",
   "main": "bin/cli.js",

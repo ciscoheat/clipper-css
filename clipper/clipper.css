@@ -171,40 +171,40 @@
 
   h1,
   .h1 {
-    @apply text-5xl font-bold;
-    line-height: var(--heading-line-height, var(--text-5xl--line-height));
+    @apply text-6xl font-bold;
+    line-height: var(--heading-line-height, var(--text-6xl--line-height));
     --heading-start-current: calc((var(--heading-margin-top) * 1.45) + var(--heading-margin-top-offset));
     --heading-end-current: calc((var(--heading-margin-bottom) * 1.45) + var(--heading-margin-bottom-offset));
   }
 
   h2,
   .h2 {
-    @apply text-4xl font-bold;
-    line-height: var(--heading-line-height, var(--text-4xl--line-height));
+    @apply text-5xl font-bold;
+    line-height: var(--heading-line-height, var(--text-5xl--line-height));
     --heading-start-current: calc((var(--heading-margin-top) * 1.3) + var(--heading-margin-top-offset));
     --heading-end-current: calc((var(--heading-margin-bottom) * 1.3) + var(--heading-margin-bottom-offset));
   }
 
   h3,
   .h3 {
-    @apply text-3xl font-semibold;
-    line-height: var(--heading-line-height, var(--text-3xl--line-height));
+    @apply text-4xl font-semibold;
+    line-height: var(--heading-line-height, var(--text-4xl--line-height));
     --heading-start-current: calc((var(--heading-margin-top) * 1.15) + var(--heading-margin-top-offset));
     --heading-end-current: calc((var(--heading-margin-bottom) * 1.15) + var(--heading-margin-bottom-offset));
   }
 
   h4,
   .h4 {
-    @apply text-2xl font-semibold;
-    line-height: var(--heading-line-height, var(--text-2xl--line-height));
+    @apply text-3xl font-semibold;
+    line-height: var(--heading-line-height, var(--text-3xl--line-height));
     --heading-start-current: calc((var(--heading-margin-top) * 1) + var(--heading-margin-top-offset));
     --heading-end-current: calc((var(--heading-margin-bottom) * 1) + var(--heading-margin-bottom-offset));
   }
 
   h5,
   .h5 {
-    @apply text-xl font-semibold;
-    line-height: var(--heading-line-height, var(--text-xl--line-height));
+    @apply text-2xl font-semibold;
+    line-height: var(--heading-line-height, var(--text-2xl--line-height));
     --heading-start-current: calc((var(--heading-margin-top) * 0.9) + var(--heading-margin-top-offset));
     --heading-end-current: calc((var(--heading-margin-bottom) * 0.9) + var(--heading-margin-bottom-offset));
   }

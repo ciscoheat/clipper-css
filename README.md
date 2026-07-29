@@ -114,7 +114,16 @@ If a heading needs a different visual size, apply the display class directly:
 <h3 class="h2">Semantically h3, visually h2</h3>
 ```
 
-Body text stays stable while header sizes (and spacing) scale fluidly.
+Body text and headings scale fluidly. The standard body and UI sizes (`text-xs` through `text-xl`) are controlled separately from heading and display sizes (`text-2xl` through `text-7xl`):
+
+```css
+:root {
+  --text-scale: 1.05;
+  --heading-scale: 1.125;
+}
+```
+
+Use `1` for the default scales, values below `1` to reduce a range, and values above `1` to increase it. Semantic headings use `text-6xl` for `h1` down through `text-2xl` for `h5`; `text-7xl` remains available for exceptional display text.
 
 ## List of utility classes
 

@@ -1,4 +1,8 @@
 :root {
+  /* Scale body/UI text and heading/display text independently. */
+  --text-scale: 1;
+  --heading-scale: 1;
+
   /* Color definitions */
   --background: light-dark(var(--color-white), var(--color-slate-950));
   --foreground: light-dark(var(--color-slate-900), var(--color-slate-100));
@@ -44,14 +48,45 @@
   --font-heading: "Poppins", sans-serif;
   --font-text: "Inter", sans-serif;
 
-  --text-base: 1rem;
-  --text-xl: clamp(1.05rem, 1rem + 0.4vw, 1.2rem);
-  --text-2xl: clamp(1.1875rem, 1rem + 0.7vw, 1.625rem);
-  --text-3xl: clamp(1.375rem, 1.1rem + 1vw, 2rem);
-  --text-4xl: clamp(1.75rem, 1.35rem + 1.5vw, 2.5rem);
-  --text-5xl: clamp(2.125rem, 1.7rem + 2vw, 3.25rem);
-  --text-6xl: clamp(3.25rem, 2.8rem + 1.8vw, 4.5rem);
-  --text-7xl: clamp(3.75rem, 3rem + 2.2vw, 5.25rem);
+  --text-xs: calc(0.75rem * var(--text-scale));
+  --text-sm: calc(0.875rem * var(--text-scale));
+  --text-base: calc(1rem * var(--text-scale));
+  --text-lg: calc(1.125rem * var(--text-scale));
+  --text-xl: clamp(
+    calc(1.125rem * var(--text-scale)),
+    calc((1rem + 0.4vw) * var(--text-scale)),
+    calc(1.25rem * var(--text-scale))
+  );
+  --text-2xl: clamp(
+    calc(1.1875rem * var(--heading-scale)),
+    calc((1rem + 0.7vw) * var(--heading-scale)),
+    calc(1.625rem * var(--heading-scale))
+  );
+  --text-3xl: clamp(
+    calc(1.375rem * var(--heading-scale)),
+    calc((1.1rem + 1vw) * var(--heading-scale)),
+    calc(2rem * var(--heading-scale))
+  );
+  --text-4xl: clamp(
+    calc(1.75rem * var(--heading-scale)),
+    calc((1.35rem + 1.5vw) * var(--heading-scale)),
+    calc(2.5rem * var(--heading-scale))
+  );
+  --text-5xl: clamp(
+    calc(2.125rem * var(--heading-scale)),
+    calc((1.7rem + 2vw) * var(--heading-scale)),
+    calc(3.25rem * var(--heading-scale))
+  );
+  --text-6xl: clamp(
+    calc(3.25rem * var(--heading-scale)),
+    calc((2.8rem + 1.8vw) * var(--heading-scale)),
+    calc(4.5rem * var(--heading-scale))
+  );
+  --text-7xl: clamp(
+    calc(3.75rem * var(--heading-scale)),
+    calc((3rem + 2.2vw) * var(--heading-scale)),
+    calc(5.25rem * var(--heading-scale))
+  );
 }
 
 :root {

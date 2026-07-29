@@ -10,6 +10,19 @@
 @import "./variables.css";
 @import "./components.css";
 
+/* Keep typography sizing valid when an older variables.css lacks these tokens. */
+@property --text-scale {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --heading-scale {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
 /* Custom variants exposed to templates for app-level state styling */
 @custom-variant theme-dark (&:where(.dark, .dark *));
 @custom-variant theme-light (&:where(.light, .light *));

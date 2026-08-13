@@ -39,7 +39,7 @@ const coreExtraFiles = [
   },
   {
     src: "SKILL.md",
-    dest: path.join(".github", "skills", "clipper-convert-website", "SKILL.md"),
+    dest: path.join(".agents", "skills", "clipper-convert-website", "SKILL.md"),
   },
 ];
 

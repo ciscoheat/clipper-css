@@ -70,7 +70,7 @@ async function main() {
 
   if ((await exists(path.join(cwd, "astro.config.mjs"))) || (await exists(path.join(cwd, "astro.config.ts")))) {
     type = "astro";
-  } else if ((await exists(path.join(cwd, "svelte.config.js"))) || (await exists(path.join(cwd, "svelte.config.ts")))) {
+  } else if (await exists(path.join(cwd, "src", "app.html"))) {
     type = "sveltekit";
   } /* else if ((await exists(path.join(cwd, "next.config.js"))) || (await exists(path.join(cwd, "next.config.mjs")))) {
     type = "next";

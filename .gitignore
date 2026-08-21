@@ -10,3 +10,6 @@ tests/**/dist/
 !tests/**/app.css
 !tests/**/next.config.js
 !tests/**/next.config.mjs
+!tests/astro/src/
+!tests/astro/src/styles/
+!tests/astro/src/styles/global.css

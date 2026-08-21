@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@source "../components";
+@source "../layouts";
+@source "../pages";
+@import "./clipper.css";

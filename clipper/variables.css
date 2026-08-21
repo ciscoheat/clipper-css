@@ -18,6 +18,7 @@
    * lower the spacing ratio when layouts feel too loose. Keep ratios above 1.
    */
   --text-ratio: 1.18;
+  --heading-ratio: 1.25;
   --space-ratio: 1.3;
 
   /*
@@ -30,8 +31,17 @@
    */
   --text-base-min: 1rem;
   --text-base-max: 1rem;
+  --heading-base-min: 1.1875rem;
+  --heading-base-max: 1.1875rem;
   --space-base-min: 0.75rem;
   --space-base-max: 0.95rem;
+
+  /*
+   * HTML mapping:
+   * - body and UI text use --text-base; text-xs through text-xl are utility sizes.
+   * - h1/h2/h3/h4/h5 use text-6xl/text-5xl/text-4xl/text-3xl/text-2xl.
+   * - space-* drives gap-* utilities plus section padding and layout gaps.
+   */
 
   --fluid-progress: clamp(
     0,
@@ -409,4 +419,22 @@
   /* Offset for in-page anchor links so sticky header doesn't cover headings */
   --anchor-offset: clamp(4.5rem, 8vw, 6rem);
   --backdrop-blur: 14px;
+}
+
+:root {
+  --heading-base: clamp(
+    var(--heading-base-min),
+    calc(var(--heading-base-min) + (var(--heading-base-max) - var(--heading-base-min)) * var(--fluid-progress)),
+    var(--heading-base-max)
+  );
+}
+
+@theme {
+  --text-2xl: var(--heading-base);
+  --text-3xl: calc(var(--heading-base) * var(--heading-ratio));
+  --text-4xl: calc(var(--heading-base) * var(--heading-ratio) * var(--heading-ratio));
+  --text-5xl: calc(var(--heading-base) * var(--heading-ratio) * var(--heading-ratio) * var(--heading-ratio));
+  --text-6xl: calc(
+    var(--heading-base) * var(--heading-ratio) * var(--heading-ratio) * var(--heading-ratio) * var(--heading-ratio)
+  );
 }

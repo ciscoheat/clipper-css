@@ -122,17 +122,20 @@ If a heading needs a different visual size, apply the display class directly:
 <h3 class="h2">Semantically h3, visually h2</h3>
 ```
 
-Body text and headings use one fluid geometric scale. The default ratio is a Major Third (`1.25`), with `text-base` as the center token. The scale interpolates between `360px` and `1600px` without breakpoint-specific values:
+Body text and headings use separate fluid geometric scales. Body and UI text use `--text-ratio` with `text-base` as the center token. Headings use `--heading-ratio` with `heading-base` as their `2xl` starting point. Both scales interpolate between `360px` and `1600px` without breakpoint-specific values:
 
 ```css
 :root {
-  --text-ratio: 1.25;
+  --text-ratio: 1.18;
   --text-base-min: 1rem;
-  --text-base-max: 1.125rem;
+  --text-base-max: 1rem;
+  --heading-ratio: 1.25;
+  --heading-base-min: 1.1875rem;
+  --heading-base-max: 1.1875rem;
 }
 ```
 
-Semantic headings use `text-6xl` for `h1` down through `text-2xl` for `h5`. The fluid viewport bounds can be changed with `--fluid-screen-min` and `--fluid-screen-max`.
+Semantic headings use `text-6xl` for `h1`, `text-5xl` for `h2`, `text-4xl` for `h3`, `text-3xl` for `h4`, and `text-2xl` for `h5`. The fluid viewport bounds can be changed with `--fluid-screen-min` and `--fluid-screen-max`.
 
 ## List of utility classes
 

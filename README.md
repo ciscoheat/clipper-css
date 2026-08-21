@@ -63,16 +63,6 @@ Example:
 </div>
 ```
 
-The default spacing ratio is a Major Third (`1.25`) and the scale interpolates between `360px` and `1600px`. Change the base range or ratio in `variables.css` and the rhythm updates everywhere:
-
-```css
-:root {
-  --space-ratio: 1.25;
-  --space-base-min: 0.75rem;
-  --space-base-max: 1rem;
-}
-```
-
 ## Colors
 
 Colors are also tokenized in `variables.css`, with semantic tokens so theme decisions stay centralized and dark mode works properly. Built-in tokens that can be used directly on the utility classes:
@@ -122,20 +112,32 @@ If a heading needs a different visual size, apply the display class directly:
 <h3 class="h2">Semantically h3, visually h2</h3>
 ```
 
-Body text and headings use separate fluid geometric scales. Body and UI text use `--text-ratio` with `text-base` as the center token. Headings use `--heading-ratio` with `heading-base` as their `2xl` starting point. Both scales interpolate between `360px` and `1600px` without breakpoint-specific values:
+## Fluid Scale Variables
+
+Clipper calculates text, headings, and spacing from the same viewport progress value. Below `--fluid-screen-min`, each family uses its `*-min` base value; above `--fluid-screen-max`, it uses its `*-max` value. Between those bounds, values interpolate smoothly without media queries.
 
 ```css
 :root {
+  --fluid-screen-min: 22.5rem;
+  --fluid-screen-max: 100rem;
+
   --text-ratio: 1.18;
   --text-base-min: 1rem;
   --text-base-max: 1rem;
+
   --heading-ratio: 1.25;
   --heading-base-min: 1.1875rem;
   --heading-base-max: 1.1875rem;
+
+  --space-ratio: 1.3;
+  --space-base-min: 0.75rem;
+  --space-base-max: 0.95rem;
 }
 ```
 
-Semantic headings use `text-6xl` for `h1`, `text-5xl` for `h2`, `text-4xl` for `h3`, `text-3xl` for `h4`, and `text-2xl` for `h5`. The fluid viewport bounds can be changed with `--fluid-screen-min` and `--fluid-screen-max`.
+`*-ratio` controls the contrast between adjacent scale steps. Keep it above `1`: larger values create more contrast, while smaller values produce a tighter rhythm. The `*-base-min` and `*-base-max` values set each family's center step at the smallest and largest fluid viewport sizes. Increase both to enlarge a family everywhere, or increase only the maximum to let it grow on wider screens. Use compatible units, normally `rem`, and tune one family at a time.
+
+The text family supplies `text-xs` through `text-xl`; the heading family supplies `text-2xl` through `text-6xl`; and the spacing family supplies `4xs` through `4xl` for Tailwind spacing utilities. Page-level spacing also derives from these tokens: `--section-row-padding`, `--section-row-gap`, and `--div-gap` default to spacing-scale values.
 
 ## List of utility classes
 

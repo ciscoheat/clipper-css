@@ -1,13 +1,33 @@
 :root {
-  /* Fluid scales interpolate between these viewport bounds without breakpoints. */
+  /*
+   * Fluid scales interpolate between these viewport bounds without breakpoints.
+   * At or below the minimum, tokens use their `*-min` values; at or above the
+   * maximum, they use their `*-max` values. Between them, values change
+   * smoothly with the viewport width. Use the smallest and largest widths at
+   * which you want the scale to grow, usually in rem so it also responds to
+   * the user's font-size setting.
+   */
   --fluid-screen-min: 22.5rem;
   --fluid-screen-max: 100rem;
 
-  /* Major Third keeps both scales expressive without making adjacent steps jumpy. */
-  --text-ratio: 1.25;
-  --space-ratio: 1.25;
+  /*
+   * Ratio between neighboring steps in each geometric scale. A larger ratio
+   * creates more contrast between tokens (larger headings or wider spacing);
+   * a smaller ratio makes adjacent steps closer together. Text and spacing can
+   * be tuned independently, so keep them equal for a consistent rhythm or
+   * lower the spacing ratio when layouts feel too loose. Keep ratios above 1.
+   */
+  --text-ratio: 1.2;
+  --space-ratio: 1.3;
 
-  /* Base values are the only size inputs needed to retune each fluid scale. */
+  /*
+   * Base values define the center token (`base`) at the two viewport bounds.
+   * Every larger token multiplies this value by the ratio; every smaller token
+   * divides it. Increase the base values to enlarge the whole scale, or change
+   * only the max values to make the scale grow more across wide screens. Keep
+   * min <= max, use compatible units (normally rem), and adjust one family at
+   * a time so you can judge text and spacing independently.
+   */
   --text-base-min: 1rem;
   --text-base-max: 1.125rem;
   --space-base-min: 0.75rem;

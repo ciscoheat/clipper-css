@@ -1,10 +1,9 @@
 node_modules/
 
 # Ignore test artifacts but keep configs
-tests/*/*/
+tests/*/*/**
 !tests/**/astro.config.mjs
 !tests/**/astro.config.ts
-!tests/**/svelte.config.js
-!tests/**/svelte.config.ts
+!tests/**/app.html
 !tests/**/next.config.js
 !tests/**/next.config.mjs

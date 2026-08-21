@@ -333,6 +333,7 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
     cwd,
     ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
   });
+  const clipperCssPath = path.resolve(cwd, clipperDestRelative, "clipper.css");
 
   if (cssFiles.length === 0) {
     log(`ℹ️  No CSS files found to inject import.`, c.gray);
@@ -340,20 +341,26 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
   }
 
   let patched = false;
+  let alreadyImported = false;
 
   for (const file of cssFiles) {
     const absPath = path.join(cwd, file);
+    if (path.resolve(absPath) === clipperCssPath) {
+      continue;
+    }
+
     let content = await fs.readFile(absPath, "utf-8");
+    const uncommentedContent = content.replace(/\/\*[\s\S]*?\*\//g, "");
 
     const tailwindImportRegex = /@import\s+['"]tailwindcss['"]\s*;?/i;
     const match = content.match(tailwindImportRegex);
 
     if (match) {
       // Check if already imported
-      if (content.includes("clipper.css")) {
+      if (/@import\s+['"][^'"]*clipper\.css['"]\s*;?/i.test(uncommentedContent)) {
         log(`ℹ️  Clipper CSS import already present in ${file}.`, c.gray);
-        patched = true;
-        break;
+        alreadyImported = true;
+        continue;
       }
 
       // Calculate relative path from this css file to the installed clipper.css
@@ -386,10 +393,12 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
   }
 
   if (!patched) {
-    log(
-      `ℹ️  Could not automatically inject CSS import. Is Tailwind installed?\n   Please import ${clipperDestRelative}/clipper.css manually.`,
-      c.gray,
-    );
+    if (!alreadyImported) {
+      log(
+        `ℹ️  Could not automatically inject CSS import. Is Tailwind installed?\n   Please import ${clipperDestRelative}/clipper.css manually.`,
+        c.gray,
+      );
+    }
   }
 }
 

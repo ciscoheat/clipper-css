@@ -2,8 +2,11 @@ node_modules/
 
 # Ignore test artifacts but keep configs
 tests/*/*/**
+tests/**/.astro/
+tests/**/dist/
 !tests/**/astro.config.mjs
 !tests/**/astro.config.ts
 !tests/**/app.html
+!tests/**/app.css
 !tests/**/next.config.js
 !tests/**/next.config.mjs

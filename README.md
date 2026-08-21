@@ -51,7 +51,7 @@ The section is the fundamental building block. Put these directly below `main`. 
 
 ## Spacing (the fluent part)
 
-Spacing is tokenized and fluid via `clamp()`. Use Clipper spacing utilities between `4xs` to `4xl` as normal tailwind classes. `base` is in the middle.
+Spacing is tokenized and fluid via a ratio-based `clamp()` scale. Use Clipper spacing utilities between `4xs` and `4xl` as normal Tailwind classes. `base` is the center of the scale.
 
 Example:
 
@@ -63,7 +63,15 @@ Example:
 </div>
 ```
 
-Change spacing tokens in `variables.css` and rhythm updates everywhere.
+The default spacing ratio is a Major Third (`1.25`) and the scale interpolates between `360px` and `1600px`. Change the base range or ratio in `variables.css` and the rhythm updates everywhere:
+
+```css
+:root {
+  --space-ratio: 1.25;
+  --space-base-min: 0.75rem;
+  --space-base-max: 1rem;
+}
+```
 
 ## Colors
 
@@ -114,16 +122,17 @@ If a heading needs a different visual size, apply the display class directly:
 <h3 class="h2">Semantically h3, visually h2</h3>
 ```
 
-Body text and headings scale fluidly. The standard body and UI sizes (`text-xs` through `text-xl`) are controlled separately from heading and display sizes (`text-2xl` through `text-7xl`):
+Body text and headings use one fluid geometric scale. The default ratio is a Major Third (`1.25`), with `text-base` as the center token. The scale interpolates between `360px` and `1600px` without breakpoint-specific values:
 
 ```css
 :root {
-  --text-scale: 1.05;
-  --heading-scale: 1.125;
+  --text-ratio: 1.25;
+  --text-base-min: 1rem;
+  --text-base-max: 1.125rem;
 }
 ```
 
-Use `1` for the default scales, values below `1` to reduce a range, and values above `1` to increase it. Semantic headings use `text-6xl` for `h1` down through `text-2xl` for `h5`; `text-7xl` remains available for exceptional display text.
+Semantic headings use `text-6xl` for `h1` down through `text-2xl` for `h5`. The fluid viewport bounds can be changed with `--fluid-screen-min` and `--fluid-screen-max`.
 
 ## List of utility classes
 

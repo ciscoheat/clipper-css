@@ -350,7 +350,11 @@ async function injectImport(cwd, clipperDestRelative, devMode) {
 
     if (match) {
       // Check if already imported
-      if (content.includes("clipper.css")) continue;
+      if (content.includes("clipper.css")) {
+        log(`ℹ️  Clipper CSS import already present in ${file}.`, c.gray);
+        patched = true;
+        break;
+      }
 
       // Calculate relative path from this css file to the installed clipper.css
       // clipperDestRelative is usually src/clipper

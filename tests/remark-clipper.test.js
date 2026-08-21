@@ -2,11 +2,16 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import { remarkClipper } from "../extras/remark-clipper.js";
+
+const variablesCss = readFileSync(fileURLToPath(new URL("../clipper/variables.css", import.meta.url)), "utf8");
+const clipperCss = readFileSync(fileURLToPath(new URL("../clipper/clipper.css", import.meta.url)), "utf8");
 
 /**
  * Process markdown through the remarkClipper plugin and return HTML.
@@ -22,6 +27,29 @@ async function process(markdown) {
     .process(markdown);
   return String(file);
 }
+
+test("fluid scales expose the ratio-based token contract", () => {
+  assert.match(variablesCss, /--fluid-screen-min:\s*22\.5rem/);
+  assert.match(variablesCss, /--fluid-screen-max:\s*100rem/);
+  assert.match(variablesCss, /--text-ratio:\s*1\.25/);
+  assert.match(variablesCss, /--space-ratio:\s*1\.25/);
+  assert.match(variablesCss, /--text-base-min:/);
+  assert.match(variablesCss, /--text-base-max:/);
+  assert.match(variablesCss, /--space-base-min:/);
+  assert.match(variablesCss, /--space-base-max:/);
+  assert.doesNotMatch(variablesCss, /--text-scale|--heading-scale|--space-scale-|--space-offset-/);
+
+  for (const token of ["xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl"]) {
+    assert.match(variablesCss, new RegExp(`--text-${token}:`));
+    assert.match(variablesCss, new RegExp(`--text-${token}:[^;]*var\\(--fluid-progress\\)`));
+  }
+
+  for (const token of ["4xs", "3xs", "2xs", "xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl"]) {
+    assert.match(variablesCss, new RegExp(`--space-${token}:`));
+    assert.match(variablesCss, new RegExp(`--space-${token}:[^;]*var\\(--fluid-progress\\)`));
+    assert.match(clipperCss, new RegExp(`--spacing-${token}:\\s*var\\(--space-${token}\\)`));
+  }
+});
 
 test('column="first": image is pinned before the content wrapper', async () => {
   const md = `

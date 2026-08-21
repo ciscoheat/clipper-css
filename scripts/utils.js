@@ -26,7 +26,15 @@ async function clean() {
 
     for (const folder of srcFolders) {
       const fullPath = path.join(projectRoot, folder);
-      await fs.rm(fullPath, { recursive: true, force: true });
+      if (path.basename(fullPath) === "src") {
+        const entries = await fs.readdir(fullPath, { withFileTypes: true });
+        for (const entry of entries) {
+          if (entry.name === "app.html" || entry.name === "app.css") continue;
+          await fs.rm(path.join(fullPath, entry.name), { recursive: true, force: true });
+        }
+      } else {
+        await fs.rm(fullPath, { recursive: true, force: true });
+      }
       console.log(`✅ Cleaned: ${folder}`);
     }
 

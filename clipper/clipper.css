@@ -285,6 +285,8 @@
 
 :root {
   color-scheme: light dark;
+  /* Keep native controls aligned with the primary theme token. */
+  accent-color: var(--primary);
 }
 
 .dark {

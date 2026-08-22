@@ -129,7 +129,7 @@ Clipper calculates text, headings, and spacing from the same viewport progress v
 ```css
 :root {
   --fluid-screen-min: 22.5rem;
-  --fluid-screen-max: 100rem;
+  --fluid-screen-max: var(--max-page-width);
 
   --text-ratio: 1.18;
   --text-base-min: 1rem;
@@ -145,7 +145,7 @@ Clipper calculates text, headings, and spacing from the same viewport progress v
 }
 ```
 
-`*-ratio` controls the contrast between adjacent scale steps. Keep it above `1`: larger values create more contrast, while smaller values produce a tighter rhythm. The `*-base-min` and `*-base-max` values set each family's center step at the smallest and largest fluid viewport sizes. Increase both to enlarge a family everywhere, or increase only the maximum to let it grow on wider screens. Use compatible units, normally `rem`, and tune one family at a time.
+`--fluid-screen-max` follows `--max-page-width` by default, so the scales finish growing at the page width; set it to another compatible length to override that behavior. `*-ratio` controls the contrast between adjacent scale steps. Keep it above `1`: larger values create more contrast, while smaller values produce a tighter rhythm. The `*-base-min` and `*-base-max` values set each family's center step at the smallest and largest fluid viewport sizes. Increase both to enlarge a family everywhere, or increase only the maximum to let it grow on wider screens. Use compatible units, normally `rem`, and tune one family at a time.
 
 The text family supplies `text-xs` through `text-xl`; the heading family supplies `text-2xl` through `text-6xl`; and the spacing family supplies `4xs` through `4xl` for Tailwind spacing utilities. Page-level spacing also derives from these tokens: `--section-row-padding`, `--section-row-gap`, and `--div-gap` default to spacing-scale values.
 

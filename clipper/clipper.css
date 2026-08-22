@@ -17,9 +17,48 @@
 @custom-variant data-open (&:where([data-open], [data-open="true"], [data-state="open"], [data-state="open"] *));
 
 :root {
-  /* Grid Templates */
+  /* Derived layout tokens */
   --layout-page-width: minmax(var(--page-margin), 1fr) minmax(0, var(--max-page-width)) minmax(var(--page-margin), 1fr);
   --layout-readable: minmax(var(--page-margin), 1fr) minmax(0, var(--readable-width)) minmax(var(--page-margin), 1fr);
+
+  /* Fluid scale bases */
+  --text-base-fluid: clamp(
+    var(--text-base-min),
+    calc(var(--text-base-min) + (var(--text-base-max) - var(--text-base-min)) * var(--fluid-progress)),
+    var(--text-base-max)
+  );
+  --heading-base: clamp(
+    var(--heading-base-min),
+    calc(var(--heading-base-min) + (var(--heading-base-max) - var(--heading-base-min)) * var(--fluid-progress)),
+    var(--heading-base-max)
+  );
+
+  /* Fluid spacing scale */
+  --space-base: clamp(
+    var(--space-base-min),
+    calc(var(--space-base-min) + (var(--space-base-max) - var(--space-base-min)) * var(--fluid-progress)),
+    var(--space-base-max)
+  );
+  --space-sm: calc(var(--space-base) / var(--space-ratio));
+  --space-xs: calc(var(--space-base) / var(--space-ratio) / var(--space-ratio));
+  --space-2xs: calc(var(--space-base) / var(--space-ratio) / var(--space-ratio) / var(--space-ratio));
+  --space-3xs: calc(
+    var(--space-base) / var(--space-ratio) / var(--space-ratio) / var(--space-ratio) / var(--space-ratio)
+  );
+  --space-4xs: calc(
+    var(--space-base) / var(--space-ratio) / var(--space-ratio) / var(--space-ratio) / var(--space-ratio) /
+      var(--space-ratio)
+  );
+  --space-lg: calc(var(--space-base) * var(--space-ratio));
+  --space-xl: calc(var(--space-base) * var(--space-ratio) * var(--space-ratio));
+  --space-2xl: calc(var(--space-base) * var(--space-ratio) * var(--space-ratio) * var(--space-ratio));
+  --space-3xl: calc(
+    var(--space-base) * var(--space-ratio) * var(--space-ratio) * var(--space-ratio) * var(--space-ratio)
+  );
+  --space-4xl: calc(
+    var(--space-base) * var(--space-ratio) * var(--space-ratio) * var(--space-ratio) * var(--space-ratio) *
+      var(--space-ratio)
+  );
 }
 
 @layer base {
@@ -346,15 +385,21 @@
   container: main / inline-size;
 }
 
-/* 
-  ==============================================================================
-  Color and spacing theme definitions based on variables.css
-  If you need to add more colors, add them as tokens in variables.css and then 
-  reference them here.
-  ==============================================================================
-*/
-
+/* Tailwind utility aliases for Clipper's runtime tokens. */
 @theme inline {
+  /* Typography */
+  --text-base: var(--text-base-fluid);
+  --text-sm: calc(var(--text-base-fluid) / var(--text-ratio));
+  --text-xs: calc(var(--text-base-fluid) / var(--text-ratio) / var(--text-ratio));
+  --text-lg: calc(var(--text-base-fluid) * var(--text-ratio));
+  --text-xl: calc(var(--text-base-fluid) * var(--text-ratio) * var(--text-ratio));
+  --text-2xl: var(--heading-base);
+  --text-3xl: calc(var(--heading-base) * var(--heading-ratio));
+  --text-4xl: calc(var(--heading-base) * var(--heading-ratio) * var(--heading-ratio));
+  --text-5xl: calc(var(--heading-base) * var(--heading-ratio) * var(--heading-ratio) * var(--heading-ratio));
+  --text-6xl: calc(
+    var(--heading-base) * var(--heading-ratio) * var(--heading-ratio) * var(--heading-ratio) * var(--heading-ratio)
+  );
   /* Spacing */
   --spacing-4xs: var(--space-4xs);
   --spacing-3xs: var(--space-3xs);
@@ -367,9 +412,6 @@
   --spacing-2xl: var(--space-2xl);
   --spacing-3xl: var(--space-3xl);
   --spacing-4xl: var(--space-4xl);
-}
-
-@theme inline {
   /* Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);

@@ -31,26 +31,56 @@ async function process(markdown) {
 test("fluid scales expose the ratio-based token contract", () => {
   assert.match(clipperCss, /accent-color:\s*var\(--primary\)/);
   assert.match(variablesCss, /--fluid-screen-min:\s*22\.5rem/);
-  assert.match(variablesCss, /--fluid-screen-max:\s*100rem/);
+  assert.match(variablesCss, /--fluid-screen-max:\s*var\(--max-page-width\)/);
   assert.match(variablesCss, /--text-ratio:\s*1\.2/);
   assert.match(variablesCss, /--heading-ratio:\s*1\.25/);
   assert.match(variablesCss, /--space-ratio:\s*1\.3/);
   assert.match(variablesCss, /--text-base-min:/);
   assert.match(variablesCss, /--text-base-max:/);
+  assert.match(variablesCss, /--font-heading:/);
+  assert.match(variablesCss, /--font-text:/);
   assert.match(variablesCss, /--space-base-min:/);
   assert.match(variablesCss, /--space-base-max:/);
+  assert.doesNotMatch(clipperCss, /--font-(?:heading|text):/);
+  assert.doesNotMatch(clipperCss, /@theme\s*\{/);
+  assert.match(clipperCss, /@theme inline\s*\{/);
   assert.doesNotMatch(variablesCss, /--text-scale|--heading-scale|--space-scale-|--space-offset-/);
 
   for (const token of ["xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl"]) {
-    assert.match(variablesCss, new RegExp(`--text-${token}:`));
-    assert.match(variablesCss, new RegExp(`--text-${token}:[^;]*var\\(--fluid-progress\\)`));
+    assert.match(clipperCss, new RegExp(`--text-${token}:`));
   }
+  assert.match(clipperCss, /--text-base-fluid:[^;]*var\(--fluid-progress\)/);
+  assert.match(clipperCss, /--text-base:\s*var\(--text-base-fluid\)/);
+  assert.match(clipperCss, /--text-sm:\s*calc\(var\(--text-base-fluid\) \/ var\(--text-ratio\)\)/);
+  assert.match(
+    clipperCss,
+    /--text-xs:\s*calc\(var\(--text-base-fluid\) \/ var\(--text-ratio\) \/ var\(--text-ratio\)\)/,
+  );
+  assert.match(clipperCss, /--text-lg:\s*calc\(var\(--text-base-fluid\) \* var\(--text-ratio\)\)/);
+  assert.match(
+    clipperCss,
+    /--text-xl:\s*calc\(var\(--text-base-fluid\) \* var\(--text-ratio\) \* var\(--text-ratio\)\)/,
+  );
+  assert.doesNotMatch(variablesCss, /--text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl):/);
 
   for (const token of ["4xs", "3xs", "2xs", "xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl"]) {
-    assert.match(variablesCss, new RegExp(`--space-${token}:`));
-    assert.match(variablesCss, new RegExp(`--space-${token}:[^;]*var\\(--fluid-progress\\)`));
+    assert.match(clipperCss, new RegExp(`--space-${token}:`));
     assert.match(clipperCss, new RegExp(`--spacing-${token}:\\s*var\\(--space-${token}\\)`));
   }
+  assert.match(clipperCss, /--space-base:[^;]*var\(--fluid-progress\)/);
+  assert.match(
+    clipperCss,
+    /--space-4xs:\s*calc\(\s*var\(--space-base\)\s+\/\s+var\(--space-ratio\)(?:\s+\/\s+var\(--space-ratio\)){4}\s*\)/,
+  );
+  assert.match(clipperCss, /--space-sm:\s*calc\(var\(--space-base\) \/ var\(--space-ratio\)\)/);
+  assert.match(clipperCss, /--space-lg:\s*calc\(var\(--space-base\) \* var\(--space-ratio\)\)/);
+  assert.match(
+    clipperCss,
+    /--space-4xl:\s*calc\(\s*var\(--space-base\)\s+\*\s+var\(--space-ratio\)(?:\s+\*\s+var\(--space-ratio\)){4}\s*\)/,
+  );
+  assert.doesNotMatch(variablesCss, /--space-(?:4xs|3xs|2xs|xs|sm|base|lg|xl|2xl|3xl|4xl):/);
+  assert.match(clipperCss, /--heading-base:[^;]*var\(--fluid-progress\)/);
+  assert.doesNotMatch(variablesCss, /--heading-base:/);
 });
 
 test('column="first": image is pinned before the content wrapper', async () => {

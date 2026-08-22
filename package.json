@@ -5,6 +5,7 @@
   "scripts": {
     "clean": "node scripts/utils.js clean",
     "build": "node scripts/utils.js update-version",
+    "install:local": "node bin/install-local.js",
     "test": "node --test tests/remark-clipper.test.js",
     "test:astro": "cd tests/astro && node ../../bin/cli.js",
     "test:astro:dev": "pnpm test:astro && pnpm --dir tests/astro dev",

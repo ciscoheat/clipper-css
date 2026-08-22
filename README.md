@@ -28,6 +28,16 @@ The installation is user-friendly and won't overwrite anything without your perm
 
 After installing, the root page will display a demo of Clipper's features.
 
+### Test a local installation
+
+To run the installer from a local checkout against another project, run this from the Clipper directory:
+
+```sh
+pnpm install:local /path/to/external/project --yes
+```
+
+The project path can be absolute or relative to the Clipper directory. Omit `--yes` to use the normal installation prompts.
+
 ## Core idea in one example
 
 The section is the fundamental building block. Put these directly below `main`. The rest is pretty much self-explanatory.

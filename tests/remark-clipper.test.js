@@ -29,9 +29,10 @@ async function process(markdown) {
 }
 
 test("fluid scales expose the ratio-based token contract", () => {
+  assert.match(clipperCss, /accent-color:\s*var\(--primary\)/);
   assert.match(variablesCss, /--fluid-screen-min:\s*22\.5rem/);
   assert.match(variablesCss, /--fluid-screen-max:\s*100rem/);
-  assert.match(variablesCss, /--text-ratio:\s*1\.18/);
+  assert.match(variablesCss, /--text-ratio:\s*1\.2/);
   assert.match(variablesCss, /--heading-ratio:\s*1\.25/);
   assert.match(variablesCss, /--space-ratio:\s*1\.3/);
   assert.match(variablesCss, /--text-base-min:/);

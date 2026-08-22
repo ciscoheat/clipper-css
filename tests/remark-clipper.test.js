@@ -51,16 +51,17 @@ test("fluid scales expose the ratio-based token contract", () => {
   }
   assert.match(clipperCss, /--text-base-fluid:[^;]*var\(--fluid-progress\)/);
   assert.match(clipperCss, /--text-base:\s*var\(--text-base-fluid\)/);
-  assert.match(clipperCss, /--text-sm:\s*calc\(var\(--text-base-fluid\) \/ var\(--text-ratio\)\)/);
+  assert.match(clipperCss, /--text-sm-fluid:\s*calc\(var\(--text-base-fluid\) \/ var\(--text-ratio\)\)/);
   assert.match(
     clipperCss,
-    /--text-xs:\s*calc\(var\(--text-base-fluid\) \/ var\(--text-ratio\) \/ var\(--text-ratio\)\)/,
+    /--text-xs-fluid:\s*calc\(var\(--text-base-fluid\) \/ var\(--text-ratio\) \/ var\(--text-ratio\)\)/,
   );
-  assert.match(clipperCss, /--text-lg:\s*calc\(var\(--text-base-fluid\) \* var\(--text-ratio\)\)/);
+  assert.match(clipperCss, /--text-lg-fluid:\s*calc\(var\(--text-base-fluid\) \* var\(--text-ratio\)\)/);
   assert.match(
     clipperCss,
-    /--text-xl:\s*calc\(var\(--text-base-fluid\) \* var\(--text-ratio\) \* var\(--text-ratio\)\)/,
+    /--text-xl-fluid:\s*calc\(var\(--text-base-fluid\) \* var\(--text-ratio\) \* var\(--text-ratio\)\)/,
   );
+  assert.match(clipperCss, /--text-6xl:\s*var\(--text-6xl-fluid\)/);
   assert.doesNotMatch(variablesCss, /--text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl):/);
 
   for (const token of ["4xs", "3xs", "2xs", "xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl"]) {

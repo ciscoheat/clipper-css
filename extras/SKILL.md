@@ -33,6 +33,8 @@ For each repeated visual module, record its content model exactly: `image-only`,
 
 Create a compact geometry map from the desktop source before implementation. Record the outer page margins, the left edge and width of each major content group, each section's vertical start, image aspect ratios, and whether groups are left-aligned, centered, right-aligned, or full-bleed. Treat shared left/right edges and deliberately large blank areas as constraints, not unused room to fill.
 
+Record every horizontal peer group separately: icon-and-label features, navigation items, button clusters, inline metadata, paired cards, and controls shown on one line. For each group, note its item order, alignment, gap, vertical alignment, and whether it wraps, scrolls, or changes to a column on mobile. A row visible in the source is a layout requirement, not a suggestion.
+
 Do not begin implementation until every visible source region has an inventory entry. Use the inventory as the acceptance checklist during verification.
 
 **Done:** Reliable visual evidence exists at desktop and mobile widths, and a complete, ordered inventory and geometry map describe the source without invented content.
@@ -51,7 +53,9 @@ Record source content as data in the route or component script when a set repeat
 
 ## 3. Build The Semantic Skeleton
 
-Build the markup in the exact top-to-bottom order of the source inventory. Match the source's section count, repeated-item counts, major visual bands, and geometry-map alignment before polishing individual elements. Add a `header` or `footer` only when that region is visible in the source; do not add a semantic region merely because a typical website would have one. Use `main`, direct child `section` elements, and other semantic elements where they preserve the source structure. Use Clipper's grid, rhythm, `row`, `readable`, and `full-width` utilities when they produce the intended result; override them locally when they do not. Do not reshape the source to fit framework defaults.
+Build the markup in the exact top-to-bottom order of the source inventory. Match the source's section count, repeated-item counts, major visual bands, and geometry-map alignment before polishing individual elements. Add a `header` or `footer` only when that region is visible in the source; do not add a semantic region merely because a typical website would have one. Use `main`, direct child `section` elements, and other semantic elements where they preserve the source structure.
+
+Clipper makes ordinary `div` elements flex columns by default. Apply the `row` class to every source-inventoried horizontal peer group, such as icon-and-label features and button clusters. Add `flex-wrap`, responsive direction utilities, or local styles only when the source evidence calls for wrapping or stacking at that viewport. Do not leave source-visible peer items as an implicit column because that is the framework default. Use Clipper's grid, rhythm, `readable`, and `full-width` utilities when they produce the intended result; override them locally when they do not. Do not reshape the source to fit framework defaults.
 
 Use the source's visible copy verbatim unless a specific string is illegible in the provided evidence. Represent real destinations as links and real actions as buttons. Keep a logical heading hierarchy and expose labels for controls that lack visible text.
 
@@ -75,7 +79,7 @@ Use the actual source image assets when available. When an image is unavailable,
 
 ## 5. Verify The Conversion
 
-Render the result at the same desktop and mobile viewports used for the source evidence. Compare it directly with the source before declaring the work complete. First compare the silhouette: header presence or absence, major band heights, content-group left edges, container widths, image sizes and crops, and intentionally empty areas. Then verify every inventory entry: section order and count, exact copy, imagery, major band colors, typography and font weights, color, spacing, layout proportions, overflow, wrapping, responsive order, dark mode when applicable, keyboard focus, and meaningful interactive states.
+Render the result at the same desktop and mobile viewports used for the source evidence. Compare it directly with the source before declaring the work complete. First compare the silhouette: header presence or absence, major band heights, content-group left edges, container widths, image sizes and crops, and intentionally empty areas. Then verify every inventory entry: section order and count, exact copy, imagery, major band colors, typography and font weights, color, spacing, layout proportions, overflow, wrapping, responsive order, dark mode when applicable, keyboard focus, and meaningful interactive states. Verify each inventoried horizontal peer group independently: its items must be in the source order and horizontal at the desktop reference width, with only the source-supported wrapping or stacking behavior at mobile.
 
 For each repeated module, confirm that its rendered content model matches the inventory. Remove any generated text below image-only or image-overlay modules. Remove any header or other visible element that cannot be pointed to in the source evidence.
 

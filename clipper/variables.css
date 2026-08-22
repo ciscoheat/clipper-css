@@ -17,7 +17,7 @@
    * be tuned independently, so keep them equal for a consistent rhythm or
    * lower the spacing ratio when layouts feel too loose. Keep ratios above 1.
    */
-  --text-ratio: 1.18;
+  --text-ratio: 1.2;
   --heading-ratio: 1.25;
   --space-ratio: 1.3;
 
@@ -30,11 +30,11 @@
    * a time so you can judge text and spacing independently.
    */
   --text-base-min: 1rem;
-  --text-base-max: 1rem;
+  --text-base-max: 1.125rem;
   --heading-base-min: 1.1875rem;
-  --heading-base-max: 1.1875rem;
+  --heading-base-max: 1.5rem;
   --space-base-min: 0.75rem;
-  --space-base-max: 0.95rem;
+  --space-base-max: 1rem;
 
   /*
    * HTML mapping:

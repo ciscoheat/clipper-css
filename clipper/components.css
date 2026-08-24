@@ -1,15 +1,16 @@
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center rounded-md px-4 py-2 font-heading text-sm font-semibold no-underline transition-colors;
+    @apply inline-flex items-center justify-center rounded-md px-base py-2xs font-heading text-sm font-semibold no-underline transition-colors;
     background-color: var(--primary);
     color: var(--primary-foreground);
+    border: 1px solid transparent;
     inline-size: fit-content;
     max-inline-size: 100%;
 
     &.btn-outline {
       background-color: var(--background);
       color: var(--foreground);
-      border: 1px solid var(--border);
+      border-color: var(--border);
 
       &:hover {
         background-color: var(--muted);
@@ -27,13 +28,13 @@
   }
 
   .card {
-    @apply rounded-xl border p-5 place-content-center;
+    @apply rounded-xl border p-lg place-content-center;
     border-color: var(--border);
     background-color: var(--muted);
   }
 
   .badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold;
+    @apply inline-flex items-center rounded-full px-xs py-4xs text-xs font-semibold;
     background-color: var(--primary-muted);
     color: var(--foreground);
     inline-size: fit-content;

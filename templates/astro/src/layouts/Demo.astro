@@ -114,13 +114,13 @@ const paletteGroups = [
 <Html title={title}>
   <body>
     <header id="header" class="header-sticky border-b bg-background/80">
-      <div class="row flex-wrap items-center justify-between py-4">
+      <div class="row flex-wrap items-center justify-between py-sm">
         <a href="#header" class="font-heading text-2xl font-bold no-underline text-foreground" aria-label="Clipper home"
           >Clipper ⛵</a
         >
 
         <nav aria-label="Primary" class="order-3 basis-full sm:order-2 sm:basis-auto">
-          <ul class="row flex-wrap m-0 list-none p-0 sm:gap-4 whitespace-nowrap">
+          <ul class="row flex-wrap m-0 list-none p-0 sm:gap-base whitespace-nowrap">
             {
               headerLinks.map((link) => (
                 <li>
@@ -153,11 +153,11 @@ const paletteGroups = [
             The basic page is just semantic HTML (header, footer, main) with <code>&lt;section&gt;</code> containers inside.
           </p>
         </div>
-        <div class="bg-primary-muted py-3">
+        <div class="bg-primary-muted py-sm">
           As default, elements directly below sections will respect the page max width (with a margin for smaller
           screens).
         </div>
-        <div class="full-width bg-primary-muted py-3">
+        <div class="full-width bg-primary-muted py-sm">
           <span class="page-width">
             But breaking out of a layout is no problem with the <code>.full-width</code> class. And just add <code
               >.page-width</code
@@ -236,7 +236,7 @@ const paletteGroups = [
           Because Clipper already handles section width, spacing rhythm, flex stacking, and typography defaults, most
           sections require only semantic HTML plus a few targeted utilities.
         </p>
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid md:grid-cols-2">
           <article class={cardClass}>
             <h3>Clipper-first markup</h3>
             <pre class={codeBlockClass}><code>{leanComparison.Clipper}</code></pre>
@@ -254,11 +254,11 @@ const paletteGroups = [
         <p class="readable">
           Clipper includes three generic reusable primitives in <code>components.css</code>: <code>.btn</code>, <code
             >.card</code
-          >, and <code>.badge</code>, compatible with dark mode, purely for "getting started" convenience. They can be
+          >, and <code>.badge</code>, compatible with dark mode, purely for "getting started convenience". They can be
           replaced by any UI framework or custom styles.
         </p>
 
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid md:grid-cols-2">
           <article class="card">
             <span class="badge">New</span>
             <h3>Card + badge</h3>
@@ -274,7 +274,6 @@ const paletteGroups = [
             <div class="row flex-wrap">
               <a href="#" class="btn">Primary action</a>
               <a href="#" class="btn btn-outline">Secondary action</a>
-              <span class="badge">Accessible focus</span>
             </div>
           </article>
         </div>
@@ -294,14 +293,14 @@ const paletteGroups = [
             <div>
               <h4>{group.title}</h4>
               <div
-                class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(120px,1fr))]"
+                class="grid gap-sm grid-cols-[repeat(auto-fit,minmax(120px,1fr))]"
                 role="list"
                 aria-label={group.ariaLabel}
               >
                 {group.tokens.map((token) => (
                   <article class={swatchClass} role="listitem">
                     <div class={swatchChipClass} style={`background-color: var(${token.name});`} aria-hidden="true" />
-                    <div class="mt-2 text-sm text-muted-foreground">
+                    <div class="text-sm text-muted-foreground">
                       <span class="whitespace-nowrap">{token.name}</span>
                     </div>
                   </article>

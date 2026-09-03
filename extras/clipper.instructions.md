@@ -6,19 +6,19 @@ description: "Implement Clipper pages with semantic structure, Tailwind utilitie
 
 # Clipper CSS
 
-Use Clipper's **semantic first** order: semantic HTML, then Tailwind and Clipper utilities, then a reusable component only for a repeated generic UI contract. Keep each decision in its owning layer.
+Use Clipper's **semantic first** order: semantic HTML, then Clipper utilities, then Tailwind utilities, then a reusable component only for a repeated generic UI contract. Prefer Clipper's simpler semantic utility whenever it can express the design. Keep each decision in its owning layer.
 
 ## Contract
 
 Read the installed `variables.css`, `components.css`, and `clipper.css` before editing. They show the project's current tokens, primitives, and framework behavior. Keep source-specific composition in the route; set shared palette, type, scale, page measurements, radii, and focus colors in `variables.css`; put only repeated generic primitives in `components.css`. Leave `clipper.css` unchanged unless updating the framework itself.
 
-Use static Tailwind and Clipper utility classes for layout and visual treatment. An inline `background-image` is appropriate only for a required dynamic background image that utilities cannot express.
+Use static Clipper utilities first and Tailwind utility classes second for every layout and visual treatment. Don't add a CSS `style` attribute unless all other options are exhausted; express the result with classes, a CSS custom property defined in the owning stylesheet, or a reusable component when necessary.
 
 ## Structure
 
 - Build from semantic landmarks with `section` as the direct child of `main` for each page band. Use real controls and heading levels; add headers and footers when the page calls for them.
 - A `section` supplies page-width placement, fluid block padding, and vertical rhythm. Ordinary content belongs directly inside it. Use `full-width` for a true breakout, especially a full-bleed hero, and a `page-width` child for bounded hero content.
-- `div`, `nav`, and lists are column flex layouts. Add `row` for every horizontal peer group and explicit grid columns only for a mapped grid. Use `readable` for long-form text and `min-w-0` on text-bearing children that must shrink.
+- `div`, `nav`, and lists are column flex layouts by default. Do not add `flex` to restate that default. Add `row` for every horizontal peer group; do not use Tailwind flex-direction utilities to create rows. Use explicit grid columns only for a mapped grid. Use `readable` for long-form text and `min-w-0` on text-bearing children that must shrink.
 - Use `header-sticky` only for a sticky source header. Give anchor targets an `id`.
 
 ## Tokens

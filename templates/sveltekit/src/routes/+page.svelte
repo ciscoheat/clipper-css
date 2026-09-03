@@ -112,7 +112,7 @@
 </script>
 
 <section class="bg-muted" id="overview">
-  <div class="font-heading text-sm font-semibold tracking-wide text-primary uppercase">Clipper demo</div>
+  <div class="eyebrow">Clipper demo</div>
   <div class="readable">
     <h1>How to use Clipper</h1>
     <p>
@@ -139,7 +139,7 @@
   </p>
 </section>
 <section id="defaults">
-  <div class="font-heading text-sm font-semibold tracking-wide text-primary uppercase">Built-in behavior</div>
+  <div class="eyebrow">Built-in behavior</div>
   <h2>What Clipper gives you out of the box</h2>
   <div class="grid md:grid-cols-2">
     {#each defaultsCards as card (card.title)}
@@ -192,7 +192,7 @@
 </section>
 
 <section id="lean">
-  <div class="font-heading text-sm font-semibold tracking-wide text-primary uppercase">Less Tailwind clutter</div>
+  <div class="eyebrow">Less Tailwind clutter</div>
   <h2>Same intent with fewer classes</h2>
   <p class="readable">
     Because Clipper already handles section width, spacing rhythm, flex stacking, and typography defaults, most sections
@@ -211,12 +211,12 @@
 </section>
 
 <section id="components">
-  <div class="font-heading text-sm font-semibold tracking-wide text-primary uppercase">Reusable components</div>
+  <div class="eyebrow">Reusable components</div>
   <h2>Component primitives in action</h2>
   <p class="readable">
-    Clipper includes three generic reusable primitives in <code>components.css</code>:
-    <code>.btn</code>, <code>.card</code>, and <code>.badge</code>, compatible with dark mode, purely for "getting
-    started" convenience. They can be replaced by any UI framework or custom styles.
+    Clipper includes four generic reusable primitives in <code>components.css</code>:
+    <code>.btn</code>, <code>.card</code>, <code>.badge</code> and <code>.eyebrow</code>, compatible with dark mode,
+    purely for "getting started" convenience. They can be replaced by any UI framework or custom styles.
   </p>
 
   <div class="grid gap-4 md:grid-cols-2">
@@ -235,7 +235,6 @@
       <div class="row flex-wrap">
         <a href="#" class="btn">Primary action</a>
         <a href="#" class="btn btn-outline">Secondary action</a>
-        <span class="badge">Accessible focus</span>
       </div>
     </article>
   </div>
@@ -244,7 +243,7 @@
 </section>
 
 <section id="colors">
-  <div class="font-heading text-sm font-semibold tracking-wide text-primary uppercase">Color demo</div>
+  <div class="eyebrow">Color demo</div>
   <h2>Token-driven color scales</h2>
   <p class="readable">
     All colors can be easily configured with <code>variables.css</code>, with <i>easy-to-use</i> support for dark mode.
@@ -268,7 +267,7 @@
 </section>
 
 <section id="starter">
-  <div class="font-heading text-sm font-semibold tracking-wide text-primary uppercase">Starter</div>
+  <div class="eyebrow">Starter</div>
   <h2>Copy this minimal page pattern</h2>
   <pre class={codeBlockClass}><code>{quickCopySnippet}</code></pre>
 </section>

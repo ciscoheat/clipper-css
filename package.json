@@ -7,9 +7,9 @@
     "build": "node scripts/utils.js update-version",
     "install:local": "node bin/install-local.js",
     "test": "node --test tests/remark-clipper.test.js",
-    "test:astro": "cd tests/astro && node ../../bin/cli.js",
+    "test:astro": "cd tests/astro && node ../../bin/cli.js --yes",
     "dev": "pnpm test:astro && pnpm --dir tests/astro dev",
-    "test:sveltekit": "cd tests/sveltekit && node ../../bin/cli.js",
+    "test:sveltekit": "cd tests/sveltekit && node ../../bin/cli.js --yes",
     "version": "npm run build && git add clipper/clipper.css",
     "prepublishOnly": "npm run build && npm run test"
   },

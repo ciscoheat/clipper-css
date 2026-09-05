@@ -7,6 +7,10 @@
     inline-size: fit-content;
     max-inline-size: 100%;
 
+    &:hover {
+      background-color: var(--primary-hover);
+    }
+
     &.btn-outline {
       background-color: var(--background);
       color: var(--foreground);
@@ -15,10 +19,6 @@
       &:hover {
         background-color: var(--muted);
       }
-    }
-
-    &:hover {
-      background-color: var(--primary-hover);
     }
 
     &:focus-visible {

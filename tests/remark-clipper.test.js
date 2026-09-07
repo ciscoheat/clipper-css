@@ -85,8 +85,8 @@ test("fluid scales expose the ratio-based token contract", () => {
 });
 
 test("base link styles include framework-scoped anchors without competing with classes", () => {
-  assert.match(clipperCss, /:where\(a\)\s*\{/);
-  assert.match(clipperCss, /:where\(a:hover\)\s*\{/);
+  assert.match(clipperCss, /@layer components\s*\{[\s\S]*:where\(a\)\s*\{/);
+  assert.match(clipperCss, /@layer components\s*\{[\s\S]*:where\(a:hover\)\s*\{/);
   assert.doesNotMatch(clipperCss, /a:not\(\[class\]\)/);
 });
 

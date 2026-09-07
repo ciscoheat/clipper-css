@@ -203,23 +203,6 @@
     text-wrap: pretty;
   }
 
-  :where(a) {
-    color: var(--link);
-    text-decoration-line: var(--link-underline);
-    text-underline-offset: var(--link-underline-offset);
-    text-decoration-thickness: var(--link-underline-thickness);
-    text-decoration-color: currentColor;
-    transition:
-      color 180ms ease,
-      text-decoration-color 180ms ease;
-  }
-
-  :where(a:hover) {
-    color: var(--link-hover);
-    text-decoration-line: var(--link-underline-hover);
-    text-decoration-color: var(--link-hover);
-  }
-
   h1,
   .h1 {
     @apply text-6xl font-bold;
@@ -285,6 +268,25 @@
     /* Unified keyboard-focus style across interactive controls */
     outline: 2px solid var(--focus-outline-color);
     outline-offset: 2px;
+  }
+}
+
+@layer components {
+  :where(a) {
+    color: var(--link);
+    text-decoration-line: var(--link-underline);
+    text-underline-offset: var(--link-underline-offset);
+    text-decoration-thickness: var(--link-underline-thickness);
+    text-decoration-color: currentColor;
+    transition:
+      color 180ms ease,
+      text-decoration-color 180ms ease;
+  }
+
+  :where(a:hover) {
+    color: var(--link-hover);
+    text-decoration-line: var(--link-underline-hover);
+    text-decoration-color: var(--link-hover);
   }
 }
 

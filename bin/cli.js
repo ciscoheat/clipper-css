@@ -24,13 +24,7 @@ const colors = {
 
 const c = colors; // shorthand
 
-const generatedProjectDirectories = [
-  "node_modules/**",
-  "dist/**",
-  "build/**",
-  ".svelte-kit/**",
-  ".astro/**",
-];
+const generatedProjectDirectories = ["node_modules/**", "dist/**", "build/**", ".svelte-kit/**", ".astro/**"];
 
 const coreExtraFiles = [
   {

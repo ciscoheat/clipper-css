@@ -90,6 +90,15 @@ test("base link styles include framework-scoped anchors without competing with c
   assert.doesNotMatch(clipperCss, /a:not\(\[class\]\)/);
 });
 
+test("Tailwind dark utilities follow Clipper theme classes", () => {
+  assert.match(clipperCss, /@custom-variant dark \(&:where\(\.dark, \.dark \*\)\);/);
+  assert.doesNotMatch(clipperCss, /@custom-variant theme-(?:dark|light)/);
+  assert.match(clipperCss, /\.dark\s*\{\s*color-scheme:\s*dark;/);
+  assert.match(clipperCss, /\.light\s*\{\s*color-scheme:\s*light;/);
+  assert.match(variablesCss, /--background:\s*light-dark\(/);
+  assert.match(variablesCss, /--foreground:\s*light-dark\(/);
+});
+
 test('column="first": image is pinned before the content wrapper', async () => {
   const md = `
 <section column="first">

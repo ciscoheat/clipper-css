@@ -113,6 +113,22 @@ Example:
 <span class="bg-accent-foreground">First item</span>
 ```
 
+## Theme mode
+
+Clipper follows Tailwind's standard `dark:` variant. Add `dark` or `light` to the root element to select an explicit theme:
+
+```html
+<html class="dark">
+  <body>
+    <p class="text-foreground dark:text-primary-200">Theme-aware text</p>
+  </body>
+</html>
+```
+
+The color tokens in `variables.css` use the CSS `light-dark()` function. They respond to the inherited `color-scheme`, which Clipper sets from the `.dark` and `.light` classes. Without either class, the browser's color-scheme preference is used.
+
+Use unprefixed utilities for light/default styling and `dark:` utilities for dark-mode overrides. There is no separate `light:` variant; light mode is the default state.
+
 ## Typography
 
 Headings are semantic first (`h1`..`h5`).

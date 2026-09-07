@@ -10,9 +10,8 @@
 @import "./variables.css";
 @import "./components.css";
 
-/* Custom variants exposed to templates for app-level state styling */
-@custom-variant theme-dark (&:where(.dark, .dark *));
-@custom-variant theme-light (&:where(.light, .light *));
+/* Match Tailwind's dark variant to Clipper's explicit theme class. */
+@custom-variant dark (&:where(.dark, .dark *));
 /* Matches common open-state attributes from native + headless UI patterns */
 @custom-variant data-open (&:where([data-open], [data-open="true"], [data-state="open"], [data-state="open"] *));
 

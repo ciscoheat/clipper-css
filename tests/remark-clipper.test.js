@@ -84,6 +84,12 @@ test("fluid scales expose the ratio-based token contract", () => {
   assert.doesNotMatch(variablesCss, /--heading-base:/);
 });
 
+test("base link styles include framework-scoped anchors without competing with classes", () => {
+  assert.match(clipperCss, /:where\(a\)\s*\{/);
+  assert.match(clipperCss, /:where\(a:hover\)\s*\{/);
+  assert.doesNotMatch(clipperCss, /a:not\(\[class\]\)/);
+});
+
 test('column="first": image is pinned before the content wrapper', async () => {
   const md = `
 <section column="first">

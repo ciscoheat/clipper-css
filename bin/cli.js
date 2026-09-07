@@ -24,6 +24,14 @@ const colors = {
 
 const c = colors; // shorthand
 
+const generatedProjectDirectories = [
+  "node_modules/**",
+  "dist/**",
+  "build/**",
+  ".svelte-kit/**",
+  ".astro/**",
+];
+
 const coreExtraFiles = [
   {
     src: "remark-clipper.js",
@@ -104,11 +112,11 @@ async function main() {
   const templateSourceDir = path.join(templatesDir, selectedConfig.templateSrc);
 
   // 3. Scan for existing clipper.css
-  // Using globby with gitignore support to avoid manual ignore lists
-  // In dev mode, only ignore node_modules; in production, respect .gitignore
+  // Ignore generated output so build artifacts are never treated as source files.
   const existingClipperFiles = await globby("**/clipper.css", {
     cwd,
-    ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
+    ignore: generatedProjectDirectories,
+    ...(!devMode ? { gitignore: true } : {}),
   });
 
   const existingClipperPath = existingClipperFiles.length > 0 ? existingClipperFiles[0] : null;
@@ -328,10 +336,10 @@ function parseVersion(content) {
  * @param {boolean} devMode
  */
 async function injectImport(cwd, clipperDestRelative, devMode) {
-  // Use .gitignore or custom ignore based on dev mode
   const cssFiles = await globby("**/*.{css,scss}", {
     cwd,
-    ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
+    ignore: generatedProjectDirectories,
+    ...(!devMode ? { gitignore: true } : {}),
   });
   const clipperCssPath = path.resolve(cwd, clipperDestRelative, "clipper.css");
 
@@ -456,7 +464,8 @@ async function copyWithOverwritePrompt({ autoYes, initialOverwrite, message, src
 async function scanForTailwindImport(cwd, devMode) {
   const cssFiles = await globby("**/*.css", {
     cwd,
-    ...(devMode ? { ignore: ["node_modules/**"] } : { gitignore: true }),
+    ignore: generatedProjectDirectories,
+    ...(!devMode ? { gitignore: true } : {}),
   });
 
   const tailwindImportRegex = /@import\s+['"]tailwindcss['"]\s*;?/i;

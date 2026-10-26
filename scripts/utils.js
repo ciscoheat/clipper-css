@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-check
 
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -7,6 +8,14 @@ import { globby } from "globby";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
+
+function errorExit(/** @type {unknown} */ error) {
+  console.error(
+    "❌ Error during cleanup:",
+    typeof error === "object" && error !== null && "message" in error ? error.message : error,
+  );
+  process.exit(1);
+}
 
 /**
  * Clean up test directories by removing src folders
@@ -40,8 +49,7 @@ async function clean() {
 
     console.log("✅ Cleanup complete.");
   } catch (error) {
-    console.error("❌ Error during cleanup:", error.message);
-    process.exit(1);
+    errorExit(error);
   }
 }
 
@@ -75,8 +83,7 @@ async function updateVersion() {
     await fs.writeFile(clipperPath, updatedContent, "utf-8");
     console.log(`✅ Updated clipper.css to v${version}`);
   } catch (error) {
-    console.error("❌ Error updating version:", error.message);
-    process.exit(1);
+    errorExit(error);
   }
 }
 

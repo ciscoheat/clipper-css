@@ -1,12 +1,12 @@
 {
   "name": "clipper-css",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "Clipper is a simple Tailwind framework for building pages without fighting CSS and drowning in utility classes.",
   "scripts": {
     "clean": "node scripts/utils.js clean",
     "build": "node scripts/utils.js update-version",
     "install:local": "node bin/install-local.js",
-    "test": "node --test tests/remark-clipper.test.js",
+    "test": "node --test tests/remark-clipper.test.js tests/cli.test.js",
     "test:astro": "cd tests/astro && node ../../bin/cli.js --yes",
     "dev": "pnpm test:astro && pnpm --dir tests/astro dev",
     "test:sveltekit": "cd tests/sveltekit && node ../../bin/cli.js --yes",

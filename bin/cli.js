@@ -133,7 +133,7 @@ async function main() {
 
     const oldVersion = parseVersion(oldContent);
     const newVersion = parseVersion(newContent);
-    const isNewer = !!(oldVersion && newVersion && oldVersion < newVersion);
+    const isNewer = !!(oldVersion && newVersion && compareVersions(oldVersion, newVersion) < 0);
 
     log(`   Current version: ${oldVersion || "unknown"}`);
     log(`   New version:     ${newVersion || "unknown"}`);
@@ -319,8 +319,29 @@ async function main() {
  * @param {string} content
  */
 function parseVersion(content) {
-  const match = content.match(/v([\d\.]+)/);
+  const match = content.match(/\bv(\d+(?:\.\d+)*)\b/);
   return match ? match[1] : null;
+}
+
+/**
+ * Compares numeric version components.
+ * @param {string} versionA
+ * @param {string} versionB
+ * @returns {-1 | 0 | 1}
+ */
+function compareVersions(versionA, versionB) {
+  const partsA = versionA.split(".").map(Number);
+  const partsB = versionB.split(".").map(Number);
+
+  for (let i = 0; i < Math.max(partsA.length, partsB.length); i++) {
+    const partA = partsA[i] ?? 0;
+    const partB = partsB[i] ?? 0;
+    if (partA !== partB) {
+      return partA < partB ? -1 : 1;
+    }
+  }
+
+  return 0;
 }
 
 /**
